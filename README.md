@@ -4,4 +4,5 @@
 - 💞️ I’m looking to collaborate on javascript projects
 - 📫 How to reach me jamalburns224@gmail.com
 
-![vega](https://user-images.githubusercontent.com/131797675/234338262-ebdc7c74-a1cc-4fcc-96a0-b2904c83a409.jpg)
+
+![pro](https://user-images.githubusercontent.com/131797675/234341396-bf9c1438-a58f-47d0-bf66-c65e10f9ea57.png)
