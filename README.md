@@ -5,4 +5,5 @@
 - 📫 How to reach me jamalburns224@gmail.com
 
 
-![pro](https://user-images.githubusercontent.com/131797675/234341396-bf9c1438-a58f-47d0-bf66-c65e10f9ea57.png)
+![pro](https://user-images.githubusercontent.com/131797675/234342093-5320abea-1e32-4c0a-8aa6-862a4ff9aff9.jpg)
+
