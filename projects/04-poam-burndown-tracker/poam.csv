@@ -1,0 +1,9 @@
+item_id,control_id,weakness,risk,remediation_plan,owner,opened,milestone_due,completed,status,evidence_of_closure
+POAM-001,3.5.3,MFA not enforced for non-privileged network access,High,Enable MFA in the identity provider for all users; pilot with IT then roll out by department,J. Rivera,2026-06-01,2026-08-15,,In Progress,Screenshot of enforced policy + report showing 100% enrolment
+POAM-002,3.4.8,No application allowlisting on workstations,High,Deploy WDAC in audit mode for 30 days then enforce,J. Rivera,2026-06-01,2026-10-01,,In Progress,Policy export + endpoint compliance report
+POAM-003,3.13.11,FIPS-validated cryptography not confirmed for CUI at rest,High,Inventory crypto modules; enable FIPS mode; record CMVP certificate numbers,M. Chen,2026-06-01,2026-09-15,,In Progress,CMVP certificate numbers recorded in SSP 3.13.11
+POAM-004,3.3.5,Logs are not centralised or correlated,Medium,Stand up log collection and forward endpoint/server/firewall logs,M. Chen,2026-06-01,2026-11-01,,Not Started,Log platform showing all sources reporting
+POAM-005,3.11.2,Vulnerability scanning is ad hoc,Medium,Schedule monthly authenticated scans and assign report review,M. Chen,2026-06-01,2026-08-01,2026-07-24,Completed,Scan schedule + three consecutive monthly reports
+POAM-006,3.8.3,No documented media sanitisation procedure,Low,Write procedure to NIST SP 800-88; buy cross-cut shredder; start disposal log,S. Patel,2026-06-01,2026-07-15,2026-07-11,Completed,Signed procedure + disposal log entries
+POAM-007,3.10.4,Physical access logs not retained,Low,Enable badge log retention for 12 months; add monthly review,S. Patel,2026-06-01,2026-08-30,,In Progress,Retention setting + first review record
+POAM-008,3.12.3,No continuous monitoring schedule,Medium,Define and calendar monthly scan / weekly log review / quarterly access review,,2026-06-01,2026-09-30,,Not Started,Published schedule + first cycle of records

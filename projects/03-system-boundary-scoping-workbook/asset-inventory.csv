@@ -1,0 +1,9 @@
+asset_id,name,type,location,owner,os_or_firmware,processes_cui,stores_cui,transmits_cui,category,separation_mechanism,justification
+AST-001,FS-01,Server,Server room,IT,Windows Server 2022,yes,yes,yes,CUI asset,,Primary CUI file share
+AST-002,DC-01,Server,Server room,IT,Windows Server 2022,no,no,yes,Security protection asset,,Provides identity and authentication to CUI assets
+AST-003,FW-01,Firewall,Server room,IT,pfSense 2.7,no,no,yes,Security protection asset,,Enforces the CUI enclave boundary
+AST-004,LT-014,Workstation,Engineering,J. Rivera,Windows 11 Ent,yes,yes,yes,CUI asset,,Engineer opens CUI drawings
+AST-005,LT-022,Workstation,Reception,S. Patel,Windows 11 Ent,no,no,no,Contractor risk managed asset,VLAN 30 no route to CUI VLAN,Reception has no business need for CUI
+AST-006,CNC-03,OT equipment,Shop floor,Production,Proprietary controller,yes,no,no,Specialised asset,VLAN 40 outbound denied,Cannot run endpoint agent; risk treated by isolation
+AST-007,GUEST-WIFI,Network,Facility,IT,UniFi,no,no,no,Out of scope,Separate VLAN internet only,No route to any CUI asset
+AST-008,M365-GCCH,Cloud service,Cloud,IT,Microsoft GCC High,yes,yes,yes,CUI asset,,Email and SharePoint holding CUI
