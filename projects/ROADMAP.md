@@ -57,8 +57,19 @@ scanning early even if you write it up later.
 
 ### 8. Client Intake Questionnaire (project 08)
 
-Last, because you now know what you actually need to ask, and roughly how long
-the work takes.
+You now know what you actually need to ask, and roughly how long the work takes.
+
+### 9. Consulting Website (project 09)
+
+Last in the sequence, but **start it in week 3** — it is the only project here
+that other people see, and it needs real content from the projects above to be
+worth showing.
+
+The order matters: a portfolio site built before you have done the work
+describes ambitions. Built after, it describes evidence.
+
+**Stop condition:** every `EDIT:` placeholder replaced, hosted on a real domain,
+share card rendering correctly.
 
 ---
 
@@ -89,6 +100,7 @@ At 10–15 hours a week the whole sequence runs about ten weeks. Realistic split
 | 6–8 | Documentation kit (01) — the long one |
 | 9 | POA&M (04), policies (05) |
 | 10 | VM programme (06), intake (08) |
+| 11 | Website (09) — real content from everything above |
 
 Start outreach in week 3, not week 10. Compliance sales cycles run 30–90 days,
 so conversations started early close around the time you have something to sell.

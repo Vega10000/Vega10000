@@ -39,8 +39,9 @@ python3 projects/08-client-intake-questionnaire/scope_calculator.py --preset med
 | [06](06-vulnerability-management-program/) | Vulnerability Management Program | 12–20 h | Proof of hands-on skill; $1k–$3k add-on |
 | [07](07-home-compliance-lab/) | Home Compliance Lab | 15–25 h | Makes everything else credible |
 | [08](08-client-intake-questionnaire/) | Client Intake Questionnaire | 4–6 h | Makes everything else profitable |
+| [09](09-consulting-website/) | Consulting Website & Client Tools | 10–16 h | Top of the funnel for all of it |
 
-**Total: roughly 75–125 hours.** At 12 hours a week, about ten weeks.
+**Total: roughly 85–140 hours.** At 12 hours a week, about eleven weeks.
 
 ## Marketing and monetization
 

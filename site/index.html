@@ -860,7 +860,7 @@
           <div class="tele-head"><span class="eyebrow">Summary</span></div>
           <div class="stat-grid">
             <div class="stat"><span class="n">110</span><span class="k">800-171 controls documented</span></div>
-            <div class="stat"><span class="n">8</span><span class="k">Portfolio projects</span></div>
+            <div class="stat"><span class="n">9</span><span class="k">Portfolio projects</span></div>
             <div class="stat"><span class="n">14</span><span class="k">Policy templates</span></div>
             <div class="stat"><span class="n">2</span><span class="k">Certifications held</span></div>
           </div>
@@ -922,7 +922,7 @@
       <div class="sec-head">
         <span class="eyebrow">03</span>
         <h2 id="h-projects">Project repository</h2>
-        <span class="count" id="projCount">8 of 8</span>
+        <span class="count" id="projCount">9 of 9</span>
       </div>
 
       <div class="controls">
@@ -1518,6 +1518,15 @@
       problem: "Practising compliance on a clean environment teaches nothing. Real environments have legacy systems and undocumented exceptions.",
       approach: "Built with realistic problems baked in — a shared admin account, an unpatched legacy box, a file share with inherited permissions nobody understands. Every documentation artifact gets drafted against this first.",
       result: "The test bed for everything else here, and the source of the awkward findings that make the templates realistic."
+    },
+    {
+      name: "Consulting Website & Client Tools",
+      year: 2026, status: "active",
+      tags: ["JavaScript", "Web", "Product", "Consulting"],
+      blurb: "This page. A single self-contained file carrying the profile, the project repository, and four working tools a prospect can use before we have spoken.",
+      problem: "A portfolio that only claims competence asks a stranger to take your word for it, and a CV gives them nothing to do.",
+      approach: "Built the tools I actually use into the page itself — an interview request builder, a client onboarding tracker, an independent contractor agreement generator, and a marketing dashboard that computes from data you enter. No frameworks, no external requests, one file.",
+      result: "A prospect who runs the contract generator has spent five minutes with how I think about an engagement. That is a different conversation from one that starts at a CV."
     },
     {
       name: "Client Intake Questionnaire",
@@ -2152,23 +2161,51 @@
 
   $("#kCopy").addEventListener("click", () => copyText(buildAgreement(), "Agreement copied — paste into your document editor."));
 
-  $("#kDownload").addEventListener("click", () => {
+  // Saving the agreement has to work in two different hosts. Served from your own
+  // domain, an <a download> click is a real download. Inside the Claude artifact
+  // viewer, page-initiated downloads are blocked and the click fails *silently*
+  // rather than throwing — so a try/catch around it never fires and the page
+  // would claim a download that never happened. Resolve the host's downloads
+  // capability up front instead and branch on what actually exists.
+  //   namespace -> artifact viewer, capability granted
+  //   null      -> artifact viewer, capability unavailable
+  //   undefined -> no window.claude at all, i.e. self-hosted
+  const downloadsReady = (window.claude && typeof window.claude.use === "function")
+    ? window.claude.use("downloads").catch(() => null)
+    : Promise.resolve(undefined);
+
+  $("#kDownload").addEventListener("click", async () => {
     const text = buildAgreement();
-    const nameBit = (val(k.client, "agreement")).replace(/[^\w-]+/g, "-").replace(/^-|-$/g, "").toLowerCase();
-    try {
-      const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
-      const url = URL.createObjectURL(blob);
+    const nameBit = val(k.client, "agreement")
+      .replace(/[^\w-]+/g, "-").replace(/^-|-$/g, "").toLowerCase();
+    const filename = `ic-agreement-${nameBit || "draft"}.txt`;
+    const dl = await downloadsReady;
+
+    if (dl) {
+      try {
+        await dl.save({ filename, data: text });
+        flash("Saved " + filename);
+      } catch (err) {
+        if (err && err.code === "declined") return;   // viewer said no; say nothing
+        copyText(text, "Could not save the file — copied to clipboard instead.");
+      }
+      return;
+    }
+
+    if (dl === undefined) {
+      const url = URL.createObjectURL(new Blob([text], { type: "text/plain;charset=utf-8" }));
       const a = document.createElement("a");
       a.href = url;
-      a.download = `ic-agreement-${nameBit || "draft"}.txt`;
+      a.download = filename;
       document.body.appendChild(a);
       a.click();
       a.remove();
       setTimeout(() => URL.revokeObjectURL(url), 1000);
-      flash("Download started.");
-    } catch {
-      copyText(text, "Download unavailable here — copied to clipboard instead.");
+      flash("Downloaded " + filename);
+      return;
     }
+
+    copyText(text, "Downloads are unavailable here — copied to clipboard instead.");
   });
 
   $("#kPrint").addEventListener("click", () => {
