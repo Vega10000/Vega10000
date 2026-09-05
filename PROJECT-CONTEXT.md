@@ -4,7 +4,7 @@ A single brief covering everything built so far. Upload this as knowledge to the
 claude.ai Project named **"Cybersecurity Profile and Webpage"** so any future
 chat starts with the full picture instead of re-deriving it.
 
-Last updated: 2026-08-16
+Last updated: 2026-09-05
 
 ---
 
@@ -12,15 +12,50 @@ Last updated: 2026-08-16
 
 **Vega10000** (jamalburns224@gmail.com, github.com/Vega10000).
 
-Positioning: **GRC / compliance analyst specialising in CMMC Level 2 and NIST
-SP 800-171 for small defense contractors** — 10-to-100-person machine shops,
-engineering firms, and suppliers who have been told by a prime that they need
-CMMC and do not know where to start.
+Positioning (revised Sept 2026): **GRC / compliance analyst specialising in NIST
+SP 800-171 Rev 2 and DFARS 252.204-7012 for small defense contractors** —
+10-to-100-person machine shops, engineering firms, and suppliers.
+
+The old pitch was "get CMMC-certified before your deadline." That deadline no
+longer exists (see §2.0). The pitch is now: **your CMMC deadline is gone, your
+DFARS obligation is not** — an accurate SPRS score, a real SSP, and a working
+POA&M are still contractually required, and DIBCAC still spot-checks.
 
 Holds Security+. Pursuing CMMC Certified Professional (CCP). Goal is a
 GRC/compliance role plus consulting and product income alongside it.
 
 ---
+
+## 2.0 REGULATORY STATUS — read this first
+
+**On 13 July 2026 the Department suspended CMMC Phase 2** and stood up a CMMC
+Reform Task Force to review the whole programme.
+
+**Suspended:** Level 2 third-party (C3PAO) assessments, Level 3 DIBCAC
+assessments, the 10 November 2026 Phase 2 date, and the related contract
+designations (affected solicitations to be amended).
+
+**NOT suspended — still binding:**
+- DFARS 252.204-7012
+- NIST SP 800-171 Rev 2, all 110 requirements
+- The self-assessment and a current, accurate SPRS score (Phase 1 was never suspended)
+- 72-hour cyber incident reporting to DIBNET; cloud security requirements
+- DIBCAC spot-checks against self-reported scores
+
+**In motion:** the Task Force RFI closed 14 Aug 2026; recommendations are due on
+or about **13 September 2026** and had not been published as of 5 Sep 2026.
+
+**Action for whoever picks this up:** re-verify this section before using it.
+It is the most volatile content in the whole project, the page carries a visible
+"verified as of" date, and a stale status board is a specific checkable claim
+that has gone wrong. If the Task Force report has landed, section 02 of the
+website and this section both need rewriting.
+
+**Why this is good news commercially, honestly framed:** the panic-buying market
+is gone, but so is most competitors' pitch. A consultant who can state precisely
+what changed and what did not is differentiated right now. And an inaccurate
+SPRS score carries False Claims Act exposure whether or not an assessor is
+scheduled — that risk did not move on 13 July.
 
 ## 2. What exists
 
@@ -31,7 +66,8 @@ GRC/compliance role plus consulting and product income alongside it.
 - **Published artifact:** https://claude.ai/code/artifact/d0a68471-9f67-4f75-a6f7-076a9b9f5dc0
 - **Branch:** `claude/web-page-artifact-ticacn` on `Vega10000/Vega10000`
 
-Ten sections: profile, services, project repository (search + multi-tag filter +
+Eleven sections: profile, **CMMC status board** (dated, sourced — the highest-value
+content on the page right now), services, project repository (search + multi-tag filter +
 sort + expandable case notes), skills matrix, certifications timeline,
 interview request builder, client onboarding tracker, contractor agreement
 generator, marketing dashboard, contact.
@@ -138,7 +174,15 @@ competitors do report it.
 Say: "CMMC readiness", "assessment preparation", "800-171 documentation".
 Never: "I'll certify you", "guaranteed to pass", "government approved".
 
-### 3.5 All page content is placeholder
+### 3.5 The page was rebuilt around the suspension (Sept 2026)
+
+Title, meta description, Open Graph, JSON-LD FAQ, hero, services, several
+project blurbs, the certification note, and the interview topic list were all
+rewritten to lead with DFARS/SPRS rather than a CMMC certification deadline. A
+new section 02 carries the dated status board. Structure and tooling were kept —
+they were tested and working; only content changed.
+
+### 3.6 All page content is placeholder
 
 Every project, statistic, certification, and price band on the website is
 plausible sample content, **not verified fact**. The source is annotated with
@@ -148,6 +192,9 @@ plausible sample content, **not verified fact**. The source is annotated with
 
 ## 4. Open tasks, in priority order
 
+0. **Re-verify the regulatory status** — the Task Force report was due ~13 Sep
+   2026. If it has landed, section 02 of the site and §2.0 here are both stale.
+   This outranks everything else because the page states a dated claim.
 1. **Verify the DoD scoring weights** (2 h) — see 3.2. Blocks real client use.
 2. **Replace every `EDIT:` placeholder** in `site/index.html` (2–3 h) — blocks
    showing the page to anyone.
