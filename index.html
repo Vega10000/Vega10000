@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#0b0718">
+<meta name="description" content="Acro Academy — a rhythm-based acrobatics training game with a virtual coach, real tutorial videos and an accolade system.">
+<title>Acro Academy</title>
+<link rel="preconnect" href="https://i.ytimg.com">
+<link rel="stylesheet" href="css/style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤸</text></svg>">
+</head>
+<body>
+
+<!-- ===================================================== BOOT / TITLE === -->
+<section class="screen active" id="scr-boot">
+  <div class="boot-glow"></div>
+  <div class="boot-inner">
+    <div class="boot-mark">🤸‍♀️</div>
+    <h1 class="title">ACRO<span>ACADEMY</span></h1>
+    <p class="subtitle">Drill it. Hold it. Perform it.</p>
+    <button class="btn btn-huge" id="btn-boot">Enter the Gym</button>
+    <p class="boot-note">Headphones on — the whole game runs on the beat.</p>
+  </div>
+</section>
+
+<!-- ================================================================ HUB === -->
+<section class="screen" id="scr-hub">
+  <header class="topbar">
+    <div class="rank-chip">
+      <span class="rank-icon" id="rank-icon">🌱</span>
+      <div>
+        <div class="rank-name" id="rank-name">Rookie</div>
+        <div class="rank-bar"><i id="rank-fill"></i></div>
+      </div>
+    </div>
+    <div class="topbar-stats">
+      <div class="stat"><b id="hub-stars">0</b><span>★ stars</span></div>
+      <div class="stat"><b id="hub-badges">0</b><span>badges</span></div>
+      <div class="stat"><b id="hub-streak">0</b><span>day streak</span></div>
+    </div>
+    <div class="topbar-actions">
+      <button class="icon-btn" id="btn-videos" title="Video library">📺</button>
+      <button class="icon-btn" id="btn-badges" title="Trophy case">🏅</button>
+      <button class="icon-btn" id="btn-settings" title="Settings">⚙️</button>
+    </div>
+  </header>
+
+  <div class="hub-body">
+    <div class="nugget" id="nugget">
+      <div class="nugget-avatar">N</div>
+      <div>
+        <div class="nugget-label">Coach Nova&rsquo;s golden nugget</div>
+        <div class="nugget-text" id="nugget-text">Point your toes. It is free, and it changes everything.</div>
+      </div>
+      <button class="icon-btn small" id="btn-nugget" title="Another one">🔄</button>
+    </div>
+
+    <h2 class="section-h">Training Zones</h2>
+    <div class="zone-grid" id="zone-grid"></div>
+
+    <h2 class="section-h">Skill Drills <small>practice one skill, slowly</small></h2>
+    <div class="skill-strip" id="skill-strip"></div>
+  </div>
+</section>
+
+<!-- ============================================================= BRIEF === -->
+<section class="screen" id="scr-brief">
+  <div class="brief-wrap">
+    <button class="back-btn" data-back="scr-hub">← Back</button>
+    <div class="brief-card">
+      <div class="brief-icon" id="brief-icon">🔥</div>
+      <h2 id="brief-name">Warm-Up Zone</h2>
+      <p class="brief-tag" id="brief-tag"></p>
+      <div class="coach-line">
+        <div class="nugget-avatar">N</div>
+        <p id="brief-coach"></p>
+      </div>
+      <h3 class="mini-h">Skills in this drill</h3>
+      <div class="skill-chips" id="brief-skills"></div>
+      <div class="brief-actions">
+        <button class="btn btn-ghost" id="brief-watch">📺 Watch how it&rsquo;s done</button>
+        <button class="btn btn-big" id="brief-start">Start Drill</button>
+      </div>
+      <p class="hint">Keys <b>A S D F</b> or the arrow keys — or just tap the four pads on a tablet. Hold the long notes.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================== PLAY === -->
+<section class="screen" id="scr-play">
+  <canvas id="game-canvas"></canvas>
+  <button class="pause-btn" id="btn-pause" title="Pause">❚❚</button>
+  <div class="pads" id="pads">
+    <button class="pad" data-lane="0"><b>A</b></button>
+    <button class="pad" data-lane="1"><b>S</b></button>
+    <button class="pad" data-lane="2"><b>D</b></button>
+    <button class="pad" data-lane="3"><b>F</b></button>
+  </div>
+</section>
+
+<!-- =========================================================== RESULTS === -->
+<section class="screen" id="scr-results">
+  <div class="results-wrap">
+    <h2 id="res-title">Drill Complete</h2>
+    <div class="stars" id="res-stars"><i>★</i><i>★</i><i>★</i></div>
+    <div class="res-score" id="res-score">0</div>
+    <div class="res-grid" id="res-grid"></div>
+    <div class="res-coach">
+      <div class="nugget-avatar">N</div>
+      <p id="res-coach"></p>
+    </div>
+    <div class="new-badges" id="res-badges"></div>
+    <div class="res-actions">
+      <button class="btn btn-ghost" id="res-again">Try Again</button>
+      <button class="btn btn-big" id="res-hub">Back to Gym</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ BADGES === -->
+<section class="screen" id="scr-badges">
+  <div class="panel-wrap">
+    <button class="back-btn" data-back="scr-hub">← Back</button>
+    <h2 class="panel-h">Trophy Case <small id="badge-count"></small></h2>
+    <div class="badge-grid" id="badge-grid"></div>
+  </div>
+</section>
+
+<!-- ============================================================ VIDEOS === -->
+<section class="screen" id="scr-videos">
+  <div class="panel-wrap">
+    <button class="back-btn" data-back="scr-hub">← Back</button>
+    <h2 class="panel-h">Video Library <small>watch it, then go do it</small></h2>
+    <div class="vid-nav" id="vid-nav"></div>
+    <div id="vid-groups"></div>
+  </div>
+</section>
+
+<!-- ============================================================= SKILL === -->
+<section class="screen" id="scr-skill">
+  <div class="panel-wrap">
+    <button class="back-btn" data-back="scr-hub">← Back</button>
+    <div class="skill-detail">
+      <div class="skill-preview">
+        <canvas id="preview-canvas"></canvas>
+        <div class="preview-label" id="preview-label"></div>
+      </div>
+      <div class="skill-info">
+        <h2 id="skill-name"></h2>
+        <div class="skill-meta" id="skill-meta"></div>
+        <p class="skill-desc" id="skill-desc"></p>
+        <div class="coach-line">
+          <div class="nugget-avatar">N</div>
+          <p id="skill-cue"></p>
+        </div>
+        <p class="skill-teach" id="skill-teach"></p>
+        <div class="skill-reps" id="skill-reps"></div>
+        <button class="btn btn-ghost" id="skill-watch">📺 Watch the tutorials</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================================== SETTINGS === -->
+<section class="screen" id="scr-settings">
+  <div class="panel-wrap narrow">
+    <button class="back-btn" data-back="scr-hub">← Back</button>
+    <h2 class="panel-h">Settings</h2>
+    <label class="row"><span>Music</span><input type="checkbox" id="set-music" checked></label>
+    <label class="row"><span>Sound effects</span><input type="checkbox" id="set-sfx" checked></label>
+    <label class="row"><span>Coach speaks out loud</span><input type="checkbox" id="set-voice" checked></label>
+    <label class="row"><span>Reduce motion &amp; flashing</span><input type="checkbox" id="set-motion"></label>
+    <label class="row"><span>Gymnast name</span><input type="text" id="set-name" maxlength="14" placeholder="Your name"></label>
+    <div class="danger">
+      <p>Resets stars, badges and streaks on this device.</p>
+      <button class="btn btn-danger" id="set-reset">Reset all progress</button>
+    </div>
+    <p class="credits">
+      All music in this game is generated live in your browser — original beats, no copyrighted tracks.
+      Tutorial videos are hosted on YouTube by their own creators.
+    </p>
+  </div>
+</section>
+
+<div class="toast" id="toast"></div>
+
+<script src="js/skills.js"></script>
+<script src="js/coach.js"></script>
+<script src="js/videos.js"></script>
+<script src="js/accolades.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/fx.js"></script>
+<script src="js/stage.js"></script>
+<script src="js/character.js"></script>
+<script src="js/levels.js"></script>
+<script src="js/game.js"></script>
+<script src="js/ui.js"></script>
+</body>
+</html>
