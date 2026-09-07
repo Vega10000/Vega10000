@@ -272,6 +272,119 @@
     ]
   };
 
+
+  /* ------------------------------------------------- coach personalities */
+  /* Zuri is the default: warm, direct, a little dry. Rex is pure hype.
+     Mira is quiet and precise. They share the Golden Nuggets — that is the
+     curriculum — and differ in how they react to a run. */
+  var PERSONALITIES = {
+    zuri: {
+      id: 'zuri', name: 'Coach Zuri', initial: 'Z', color: '#ff4f9a',
+      style: 'Warm and direct', unlock: 0,
+      blurb: 'Head coach. Encouraging, honest, and allergic to sloppy toes.',
+      reactions: REACTIONS
+    },
+    rex: {
+      id: 'rex', name: 'Coach Rex', initial: 'R', color: '#ff8b3d',
+      style: 'High energy', unlock: 1200,
+      blurb: 'Turns every session into a highlight reel. Loud, in a good way.',
+      reactions: {
+        greeting: ["LET'S GOOO! The floor is warm and so am I.",
+                   "There she is! Right, what are we breaking today?",
+                   "Suit up, superstar. Clock's running."],
+        returning: ["SHE'S BACK! Nobody panic, the star has returned.",
+                    "Look who walked in. Let's pick it right back up.",
+                    "However long it's been — irrelevant. Go."],
+        missionStart: ["Big energy. Let me see it.",
+                       "This one's yours. Go take it.",
+                       "Deep breath, then absolutely send it.",
+                       "You've done the work. Now go collect."],
+        doingWell: ["OH! Did everybody see that?!",
+                    "THAT'S IT! Do it eleven more times!",
+                    "Somebody call the judges, we've got a problem.",
+                    "You're cooking! Don't you dare slow down.",
+                    "Beautiful! Absolutely beautiful!"],
+        onFire: ["UNBELIEVABLE! Are you even real right now?",
+                 "Stop it. STOP IT. That's ridiculous.",
+                 "I'm putting this on the wall. Highlight reel material.",
+                 "This is the run people are going to talk about!"],
+        struggling: ["Nope, shake it off, we go again. Right now.",
+                     "That one didn't count. Next one does.",
+                     "Smaller! Go smaller, nail one, then we build back up.",
+                     "Hey. Breathe. You're closer than it feels."],
+        comeback: ["THERE IT IS! From nowhere! That's a comeback!",
+                   "You just beat yourself. That's the only opponent there is.",
+                   "See?! Ten minutes ago that was impossible. Now look."],
+        success: ["Money. Straight in the bank.",
+                  "Clean! Absolutely clean.",
+                  "You earned that one, no argument."],
+        quitting: ["Good call. Legends rest too. Go refuel.",
+                   "Alright, save some for tomorrow. Out you go."],
+        newSkill: ["OOOH. New toy. You're gonna love this.",
+                   "New skill unlocked! Watch me, then wreck it."],
+        accolade: ["BADGE! Add it to the pile!",
+                   "That's hardware. Well earned."],
+        levelUp: ["RANK UP! Different league now.",
+                  "Level up! You're not who walked in here."],
+        supervised: ["Real talk for a second: this one needs a coach and a mat. " +
+                     "We learn the shape here, you do the skill at the gym. No exceptions.",
+                     "Hold up — coach-supervised skill. Big energy is great; big energy " +
+                     "upside down without a spotter is not. Gym only."],
+        homeSafe: ["Home-friendly! Clear the space and let's move.",
+                   "You can smash this one in your living room. Go."]
+      }
+    },
+    mira: {
+      id: 'mira', name: 'Coach Mira', initial: 'M', color: '#4fd1ff',
+      style: 'Calm and precise', unlock: 3200,
+      blurb: 'Technical specialist. Quiet voice, very high standards.',
+      reactions: {
+        greeting: ["Good. Let's begin.",
+                   "Shoes off, mind on. We'll start slowly.",
+                   "Welcome back. One thing at a time today."],
+        returning: ["You're here. That's the part that matters.",
+                    "We pick up exactly where we stopped. Nothing is lost."],
+        missionStart: ["Set your feet. Then decide to go.",
+                       "One thought only. Pick it before you start.",
+                       "Slowly. Precision first; speed will follow.",
+                       "Look at where you want to finish."],
+        doingWell: ["Yes. That shape was correct.",
+                    "Good. Now repeat it exactly.",
+                    "That is the version we keep.",
+                    "Clean line. I could measure that one."],
+        onFire: ["That is consistent work. Consistency is the rarest thing there is.",
+                 "Six in a row at that standard. Remember what it felt like.",
+                 "Nothing lucky about any of those. That is craft."],
+        struggling: ["Stop. Reset. We will make it smaller.",
+                     "Your body is asking a question. Let's answer it slowly.",
+                     "This is the difficult part. It is supposed to be.",
+                     "One clean repetition. That is the whole goal now."],
+        comeback: ["You corrected it yourself. That is the skill I actually teach.",
+                   "Better than last time, measurably. Note what changed.",
+                   "You solved it. Remember how."],
+        success: ["Correct.",
+                  "Precisely that. Again.",
+                  "Good. That one was earned."],
+        quitting: ["Stopping well is also a skill. Go and rest.",
+                   "Enough for today. Sleep is where the work sets."],
+        newSkill: ["A new shape. We will learn it properly, from the beginning.",
+                   "Watch first. Do not copy yet — watch."],
+        accolade: ["Recorded. You met the standard.",
+                   "That one required real work."],
+        levelUp: ["A new level. The standard rises with it.",
+                  "Rank up. Same principles, finer margins."],
+        supervised: ["This is a coach-supervised skill. You will learn its shape and its " +
+                     "timing here. You will learn the skill itself in the gym, with a coach " +
+                     "and a mat. Those are different things.",
+                     "Inverted work requires a spotter. Not sometimes — always."],
+        homeSafe: ["Safe to practise at home. Clear the space first.",
+                   "This one needs only room and attention."]
+      }
+    }
+  };
+
+  var activeCoach = 'zuri';
+
   /* --------------------------------------------------------- the picker */
   var bags = {}, lastSaid = {};
 
@@ -316,6 +429,7 @@
   global.Coach = {
     name: 'Coach Zuri',
     initial: 'Z',
+    color: '#ff4f9a',
     wisdom: WISDOM,
     categories: Object.keys(WISDOM),
     labels: CATEGORY_LABELS,
@@ -323,8 +437,25 @@
     allWisdom: ALL_WISDOM,
     total: ALL_WISDOM.length,
 
-    /* say('doingWell') -> a reaction line */
-    say: function (key) { return pick(REACTIONS[key], 'r:' + key); },
+    /* say('doingWell') -> a reaction line, in the active coach's voice */
+    say: function (key) {
+      var p = PERSONALITIES[activeCoach] || PERSONALITIES.zuri;
+      var pool = p.reactions[key] || REACTIONS[key];
+      return pick(pool, activeCoach + ':' + key);
+    },
+
+    personalities: PERSONALITIES,
+    coaches: [PERSONALITIES.zuri, PERSONALITIES.rex, PERSONALITIES.mira],
+    setCoach: function (id) {
+      if (PERSONALITIES[id]) {
+        activeCoach = id;
+        this.name = PERSONALITIES[id].name;
+        this.initial = PERSONALITIES[id].initial;
+        this.color = PERSONALITIES[id].color;
+      }
+      return PERSONALITIES[activeCoach];
+    },
+    activeCoach: function () { return PERSONALITIES[activeCoach]; },
 
     /* nugget() -> any wisdom; nugget('balance') -> themed wisdom */
     nugget: function (category) {

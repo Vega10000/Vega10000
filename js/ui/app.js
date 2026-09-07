@@ -24,6 +24,8 @@
   var currentConfig = null;
   var lastResult = null;
   var previewRaf = null;
+  var replay = null;
+  var lastPerformance = null;
   var doneMissions = {};             // missionId -> true
 
   /* ------------------------------------------------------------- routing */
@@ -688,6 +690,34 @@
     var line = Coach.respondTo(res.accuracy, L.improved, (L.mission.plays || 0) === 0);
     $('res-coach').textContent = line;
 
+    /* A performance earns the ceremony: a replay of what she actually did,
+       and a certificate with her name on it. */
+    var actions = $('res-actions');
+    if (actions) {
+      Array.prototype.forEach.call(actions.querySelectorAll('[data-perf]'),
+        function (b) { b.remove(); });
+    }
+    if (perf && actions) {
+      lastPerformance = {
+        performed: res.performed || [],
+        score: Math.round(res.score),
+        stars: stars,
+        routine: L.mission.name,
+        grand: !!(currentConfig && currentConfig.grand)
+      };
+      var rb = doc.createElement('button');
+      rb.className = 'btn btn-ghost'; rb.setAttribute('data-perf', '1');
+      rb.textContent = '🎬 Watch the replay';
+      rb.addEventListener('click', function () { AcroAudio.sfx.whoosh(); startReplay(); });
+      actions.insertBefore(rb, actions.firstChild);
+
+      var cb = doc.createElement('button');
+      cb.className = 'btn btn-ghost'; cb.setAttribute('data-perf', '1');
+      cb.textContent = '🎖️ Certificate';
+      cb.addEventListener('click', function () { AcroAudio.sfx.click(); openCertificate(); });
+      actions.insertBefore(cb, actions.firstChild);
+    }
+
     /* accolades, rank-ups, quests */
     var fresh = Profile.checkAccolades();
     var bw = $('res-badges');
@@ -757,6 +787,49 @@
     }
     if (r.accuracy < 0.5) return 'Try the Relaxed difficulty in Settings for a run or two, then come back to Normal.';
     return 'Beat your own best. That is the only score that matters here.';
+  }
+
+  /* ==================================================================== */
+  /*  CINEMATIC REPLAY + CERTIFICATE                                      */
+  /* ==================================================================== */
+  function startReplay() {
+    if (!lastPerformance) return;
+    show('scr-replay');
+    requestAnimationFrame(function () {
+      if (!replay) replay = new Showcase.Replay();
+      replay.attach($('replay-canvas'));
+      replay.resize();
+      replay.start(lastPerformance.performed, {
+        avatar: P.avatar,
+        reduceMotion: P.settings.reduceMotion,
+        fallback: (P.routines[P.routines.length - 1] || {}).elements,
+        onDone: function () {
+          if (lastPerformance.grand) openCertificate();
+          else show('scr-results');
+        }
+      });
+    });
+  }
+
+  function openCertificate() {
+    if (replay) replay.stop();
+    show('scr-cert');
+    var lp = lastPerformance || { score: P.bestPerformance, stars: 3, routine: 'Freestyle' };
+    requestAnimationFrame(function () {
+      Showcase.drawCertificate($('cert-canvas'), {
+        name: P.name || 'The Acrobat',
+        routine: lp.routine,
+        score: lp.score,
+        stars: lp.stars,
+        rank: Profile.rank().name,
+        accolades: Profile.earnedCount(),
+        coach: Coach.activeCoach().name,
+        date: new Date().toLocaleDateString(undefined,
+                { year: 'numeric', month: 'long', day: 'numeric' })
+      });
+    });
+    AcroAudio.sfx.badge();
+    speak('Certificate of performance. Awarded to ' + (P.name || 'the acrobat') + '.');
   }
 
   /* ==================================================================== */
@@ -1378,8 +1451,37 @@
     rhythm.stage.reduceMotion = s.reduceMotion;
   }
 
+  function renderCoachPicker() {
+    var box = $('coach-picker');
+    if (!box) return;
+    box.innerHTML = '';
+    Coach.coaches.forEach(function (c) {
+      var open = P.xp >= c.unlock;
+      var b = doc.createElement('button');
+      b.className = 'coach-opt' + (P.settings.coach === c.id ? ' on' : '') + (open ? '' : ' locked');
+      b.innerHTML =
+        '<div class="cav" style="background:' + c.color + '">' + c.initial + '</div>' +
+        '<b>' + c.name + '</b>' +
+        '<span>' + esc(c.style) + '</span>' +
+        '<span>' + (open ? esc(c.blurb) : '🔒 Unlocks at ' + c.unlock + ' XP') + '</span>';
+      b.addEventListener('click', function () {
+        if (!open) { toast(c.name + ' unlocks at ' + c.unlock + ' XP.'); return; }
+        P.settings.coach = c.id;
+        Coach.setCoach(c.id);
+        Profile.save();
+        AcroAudio.sfx.click();
+        renderCoachPicker();
+        var hi = Coach.say('greeting');
+        toast(c.name + ': ' + hi);
+        speak(hi);
+      });
+      box.appendChild(b);
+    });
+  }
+
   function bindSettings() {
     var s = P.settings;
+    renderCoachPicker();
     var map = [
       ['set-music', 'music', 'checkbox'], ['set-sfx', 'sfx', 'checkbox'],
       ['set-voice', 'voice', 'checkbox'], ['set-motion', 'reduceMotion', 'checkbox'],
@@ -1496,7 +1598,11 @@
       renderWardrobe();
     });
     $('btn-parent').addEventListener('click', function () { AcroAudio.sfx.click(); renderParent(); });
-    $('btn-settings').addEventListener('click', function () { AcroAudio.sfx.click(); show('scr-settings'); });
+    $('btn-settings').addEventListener('click', function () {
+      AcroAudio.sfx.click();
+      show('scr-settings');
+      renderCoachPicker();          // XP may have unlocked a coach since boot
+    });
     $('btn-profile').addEventListener('click', function () { AcroAudio.sfx.click(); show('scr-trophy'); renderTrophy(); });
 
     Array.prototype.forEach.call(doc.querySelectorAll('[data-back]'), function (b) {
@@ -1524,6 +1630,27 @@
       if (active === rhythm) rhythm.togglePause();
       else if (mini) mini.paused = !mini.paused;
     });
+
+    $('replay-skip').addEventListener('click', function () {
+      if (replay) replay.stop();
+      AcroAudio.sfx.back();
+      if (lastPerformance && lastPerformance.grand) openCertificate();
+      else show('scr-results');
+    });
+
+    $('cert-save').addEventListener('click', function () {
+      /* Nothing external is drawn onto the canvas, so it is untainted and
+         toDataURL works even from a file:// page. */
+      try {
+        var a = doc.createElement('a');
+        a.download = 'acroverse-certificate.png';
+        a.href = $('cert-canvas').toDataURL('image/png');
+        a.click();
+        toast('Certificate saved!');
+      } catch (e) { toast('Could not save here — try Print instead.'); }
+    });
+    $('cert-print').addEventListener('click', function () { global.print(); });
+    $('cert-done').addEventListener('click', function () { AcroAudio.sfx.back(); goHub(); });
 
     $('choreo-clear').addEventListener('click', function () { routine = []; renderTimeline(); });
     $('choreo-preview').addEventListener('click', function () {
@@ -1579,6 +1706,7 @@
   /* ---- boot --------------------------------------------------------------- */
   function init() {
     P = Profile.load();
+    if (P.settings.coach) Coach.setCoach(P.settings.coach);
     /* free items are always owned, even on an old save */
     Shop.freeIds().forEach(function (id) { if (P.owned.indexOf(id) < 0) P.owned.push(id); });
     /* rebuild the completed-mission set from saved mission records */

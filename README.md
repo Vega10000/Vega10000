@@ -39,16 +39,25 @@ last is finished. Plus eight **training rooms** for free practice: Balance Lab,
 Flexibility Garden, Power Room, Coordination Zone, Rhythm Studio, Tumbling
 Arena, Choreography Studio and Performance Arena.
 
-### 🗣️ Coach Zuri
-**163 written lines.** 112 "Golden Nuggets" across the fourteen coaching themes
-— courage, discipline, balance, flexibility, strength, coordination, patience,
-focus, recovery, performance, confidence, sportsmanship, creativity and handling
-mistakes — plus 51 reactions that respond to what actually happened.
+### 🗣️ Three coaches, 242 lines
+112 "Golden Nuggets" across the fourteen coaching themes — courage, discipline,
+balance, flexibility, strength, coordination, patience, focus, recovery,
+performance, confidence, sportsmanship, creativity and handling mistakes — plus
+130 in-the-moment reactions.
 
-She adapts. Struggling gets *"Let's change the strategy — not your goal."*
-A comeback gets *"You struggled and then you solved it."* A shuffled-bag picker
-stops her repeating herself. She can speak aloud (toggleable) and always shows
-captions.
+Three personalities, unlocked by XP. The nuggets are the *curriculum* and belong
+to all of them; what changes is how they react to a run:
+
+| | | |
+|---|---|---|
+| **Coach Zuri** | Warm and direct | *"THAT'S the movement I've been waiting to see!"* |
+| **Coach Rex** | High energy | *"Somebody call the judges, we've got a problem."* |
+| **Coach Mira** | Calm and precise | *"Clean line. I could measure that one."* |
+
+They adapt. Struggling gets *"Let's change the strategy — not your goal."* A
+comeback gets *"You struggled and then you solved it."* A shuffled-bag picker
+stops repetition. Every coach carries the coach-supervised warning — that one is
+not optional, and a test asserts it.
 
 ### 🎮 Nine ways to play
 Seven arcade mini-games — **Perfect Landing**, **Balance Beam**, **Memory
@@ -98,6 +107,15 @@ Eight illustrated lessons that teach physics without saying "physics" — centre
 of mass and base of support, absorbing force on landing, how body shape changes
 rotation, momentum, why we warm up, and what nerves actually are. Each has an
 animated canvas diagram instead of an equation.
+
+### 🎬 The Championship ceremony
+A performance ends with the full ceremony: the six judged categories
+(Technique, Control, Timing, Musicality, Creativity, Consistency), then a
+**cinematic replay** — letterboxed, camera pushing in, slow-motion on her best
+moment — built from the sequence she *actually* landed, not a canned animation.
+Then a **certificate** with her name, routine, score, rank and coach's
+signature, drawn to canvas so it saves as a PNG or prints straight from a
+`file://` page.
 
 ### 👪 Parent dashboard
 Sessions, minutes, day streak, accolades, videos watched, questions answered,

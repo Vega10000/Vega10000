@@ -176,9 +176,31 @@
     </div>
     <div class="coach-line"><div class="coach-av">Z</div><p id="res-coach"></p></div>
     <div class="new-badges" id="res-badges"></div>
-    <div class="res-actions">
+    <div class="res-actions" id="res-actions">
       <button class="btn btn-ghost" id="res-again">Try Again</button>
       <button class="btn btn-big" id="res-next-btn">Continue</button>
+    </div>
+  </div>
+</section>
+
+<!-- ==================================================== REPLAY ========= -->
+<section class="screen" id="scr-replay">
+  <div class="replay-wrap">
+    <canvas id="replay-canvas"></canvas>
+    <button class="btn btn-ghost replay-skip" id="replay-skip">Skip ▸</button>
+  </div>
+</section>
+
+<!-- ==================================================== CERTIFICATE ==== -->
+<section class="screen" id="scr-cert">
+  <div class="panel-wrap">
+    <button class="back-btn" data-back="scr-hub">← Academy</button>
+    <h2 class="panel-h">Your Certificate</h2>
+    <div class="cert-frame"><canvas id="cert-canvas"></canvas></div>
+    <div class="brief-actions">
+      <button class="btn btn-ghost" id="cert-save">⬇ Save as picture</button>
+      <button class="btn btn-ghost" id="cert-print">🖨 Print</button>
+      <button class="btn btn-big" id="cert-done">Back to the Academy</button>
     </div>
   </div>
 </section>
@@ -286,6 +308,9 @@
     <label class="row"><span>Music volume</span>
       <input type="range" id="set-musicvol" min="0" max="100"></label>
 
+    <h3 class="mini-h">Your Coach</h3>
+    <div class="coach-picker" id="coach-picker"></div>
+
     <h3 class="mini-h">Accessibility</h3>
     <label class="row"><span>Reduce motion &amp; flashing</span><input type="checkbox" id="set-motion"></label>
     <label class="row"><span>Larger text</span><input type="checkbox" id="set-bigtext"></label>
@@ -328,6 +353,7 @@
 <script src="js/systems/missions.js"></script>
 <script src="js/games/rhythm.js"></script>
 <script src="js/games/minigames.js"></script>
+<script src="js/games/showcase.js"></script>
 <script src="js/ui/app.js"></script>
 </body>
 </html>

@@ -7,7 +7,7 @@ const FILES = [
   'data/rooms', 'data/districts',
   'engine/audio', 'engine/fx', 'engine/stage', 'engine/character',
   'systems/profile', 'systems/missions',
-  'games/rhythm', 'games/minigames'
+  'games/rhythm', 'games/minigames', 'games/showcase'
 ];
 
 function load(extra) {

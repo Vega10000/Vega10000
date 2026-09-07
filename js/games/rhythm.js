@@ -177,6 +177,7 @@
     this.score = 0; this.rawScore = 0;
     this.combo = 0; this.bestCombo = 0;
     this.counts = { perfect: 0, great: 0, good: 0, miss: 0 };
+    this.performed = [];            // ordered record, for the cinematic replay
     this.holdSeconds = 0;
     this.cleanReps = {};
     this.missStreak = 0;
@@ -319,6 +320,8 @@
     this.score += Math.round(VALUE[j] * mult);
 
     if (j === 'perfect') this.cleanReps[note.skill.id] = (this.cleanReps[note.skill.id] || 0) + 1;
+    this.performed.push({ skillId: note.skill.id, judgment: j,
+                          quality: j === 'perfect' ? 1 : (j === 'great' ? 0.75 : 0.5) });
 
     /* visual + audio reward, scaled to how good the hit was */
     var lx = this.hitX, ly = this.laneY(note.lane);
@@ -438,6 +441,7 @@
       bestCombo: this.bestCombo,
       holdSeconds: this.holdSeconds, cleanReps: this.cleanReps,
       totalNotes: total,
+      performed: this.performed.slice(),
       flawless: this.counts.miss === 0 && total > 0
     };
 
