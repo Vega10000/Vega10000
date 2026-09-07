@@ -1,24 +1,30 @@
-/* Loads the game's browser modules under Node by making `window` and the
-   global object the same thing, which is what a browser actually does. */
+/* Loads the browser modules under Node by making `window` and the global
+   object the same object, which is what a browser actually does. */
 const fs = require('fs'), path = require('path'), vm = require('vm');
 
-const FILES = ['skills', 'coach', 'videos', 'accolades', 'audio',
-               'fx', 'stage', 'character', 'levels', 'game'];
+const FILES = [
+  'data/skills', 'data/coach', 'data/videos', 'data/science', 'data/shop',
+  'data/rooms', 'data/districts',
+  'engine/audio', 'engine/fx', 'engine/stage', 'engine/character',
+  'systems/profile', 'systems/missions',
+  'games/rhythm', 'games/minigames'
+];
 
 function load(extra) {
+  const store = {};
   const sandbox = {
     console, Math, Date, JSON, Object, Array, String, Number, Boolean,
-    isFinite, parseInt, parseFloat, setTimeout, clearTimeout,
-    setInterval, clearInterval, Float32Array, Error,
+    isFinite, isNaN, parseInt, parseFloat, setTimeout, clearTimeout,
+    setInterval, clearInterval, Float32Array, Error, RegExp,
     performance: { now: () => Date.now() },
     requestAnimationFrame: () => 0, cancelAnimationFrame: () => {},
     addEventListener: () => {}, removeEventListener: () => {},
     devicePixelRatio: 1,
-    localStorage: (() => { const m = {}; return {
-      getItem: k => (k in m ? m[k] : null),
-      setItem: (k, v) => { m[k] = String(v); },
-      removeItem: k => { delete m[k]; }
-    }; })()
+    localStorage: {
+      getItem: k => (k in store ? store[k] : null),
+      setItem: (k, v) => { store[k] = String(v); },
+      removeItem: k => { delete store[k]; }
+    }
   };
   Object.assign(sandbox, extra || {});
   sandbox.window = sandbox;

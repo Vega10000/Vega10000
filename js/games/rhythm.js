@@ -1,5 +1,5 @@
 /* =========================================================================
-   game.js — the drill engine.
+   rhythm.js — the drill engine, and the performance runner.
 
    The music is the clock. Every note is placed at a beat position and judged
    against AcroAudio.beats(), never against a wall-clock timer, so the chart
@@ -43,9 +43,13 @@
   }
 
   /* --------------------------------------------------------- chart build */
-  function buildChart(level) {
-    var rand = rng(hash(level.id));
-    var pool = level.skills.map(function (id) { return AcroSkills.byId(id); });
+  /* cfg: { id, skills[], bars, density, holdBias } — assembled by the
+     mission runner from a room and a mission row, so a new drill is a data
+     change rather than a code change. */
+  function buildChart(cfg) {
+    var rand = rng(hash(cfg.id));
+    var pool = cfg.skills.map(function (id) { return AcroSkills.byId(id); })
+                 .filter(function (s) { return !!s; });
     var holds = pool.filter(function (s) { return s.type === 'hold'; });
     var taps = pool.filter(function (s) { return s.type === 'tap'; });
     var notes = [];
@@ -54,17 +58,17 @@
        'e' of 4 feel random. */
     var SLOTS = [0, 2, 1, 3, 0.5, 2.5, 1.5, 3.5];
 
-    for (var bar = 0; bar < level.bars; bar++) {
+    for (var bar = 0; bar < cfg.bars; bar++) {
       var startBeat = COUNT_IN_BEATS + bar * 4;
       /* ramp density up over the level so it opens gently and builds */
-      var ramp = 0.55 + 0.45 * (bar / Math.max(1, level.bars - 1));
-      var want = Math.max(1, Math.round(level.density * ramp));
+      var ramp = 0.55 + 0.45 * (bar / Math.max(1, cfg.bars - 1));
+      var want = Math.max(1, Math.round(cfg.density * ramp));
       var slots = SLOTS.slice(0, Math.min(SLOTS.length, want + 2));
       shuffleTail(slots, rand, want);
 
       for (var n = 0; n < want && n < slots.length; n++) {
         var beat = startBeat + slots[n];
-        var useHold = holds.length && (rand() < level.holdBias || !taps.length);
+        var useHold = holds.length && (rand() < cfg.holdBias || !taps.length);
         var skill = useHold
           ? holds[(rand() * holds.length) | 0]
           : taps[(rand() * taps.length) | 0];
@@ -96,7 +100,7 @@
     return {
       notes: notes,
       maxRaw: maxRaw || 1,
-      endBeat: COUNT_IN_BEATS + level.bars * 4 + 3
+      endBeat: COUNT_IN_BEATS + cfg.bars * 4 + 3
     };
   }
 
@@ -160,12 +164,12 @@
     this.uiK = Math.max(0.62, Math.min(1, Math.min(w, h) / 760));
   };
 
-  Game.prototype.start = function (levelId, opts) {
+  Game.prototype.start = function (cfg, opts) {
     opts = opts || {};
-    this.level = AcroLevels.byId(levelId);
-    if (!this.level) return;
-    this.chart = buildChart(this.level);
-    this.stage.setZone(this.level.zone);
+    this.cfg = cfg;
+    this.level = cfg;                       // kept for the HUD's label
+    this.chart = buildChart(cfg);
+    this.stage.setZone(cfg.zone || 'hub');
     this.fx.clear();
     this.gym.trail.length = 0;
     this.gym.tailInit = false;
@@ -181,12 +185,13 @@
     this.onEnd = opts.onEnd || null;
     this.onCoach = opts.onCoach || null;
 
-    AcroAudio.play(this.level.music);
-    this.bpm = AcroAudio.styleBpm(this.level.music);
+    AcroAudio.play(cfg.music);
+    AcroAudio.setIntensity(0.5);
+    this.bpm = AcroAudio.styleBpm(cfg.music);
     this.beat = 0;
     this.lastFrame = 0;
 
-    this.say(AcroCoach.say(AcroCoach.startKeyFor(this.level.family)), 4.5);
+    this.say(cfg.openingLine || Coach.nuggetFor(cfg.room), 4.5);
 
     this.bindKeys();
     this.running = true;
@@ -298,8 +303,8 @@
       this.missStreak++;
       this.fx.popText(this.hitX, this.laneY(note.lane), 'MISS', JUDGE_COLOR.miss, 24);
       AcroAudio.sfx.miss();
-      if (this.missStreak === 3) this.say(AcroCoach.say('manyMiss'), 3.4);
-      else if (this.missStreak === 1) this.say(AcroCoach.say('miss'), 2.8);
+      if (this.missStreak === 3) this.say(Coach.say('struggling'), 3.4);
+      else if (this.missStreak === 1) this.say(Coach.nugget('mistakes'), 2.8);
       return;
     }
 
@@ -308,6 +313,8 @@
     this.bestCombo = Math.max(this.bestCombo, this.combo);
 
     var mult = 1 + Math.min(this.combo, 40) / 20;   // caps at 3x
+    /* the arrangement thickens as she strings hits together */
+    AcroAudio.setIntensity(0.45 + Math.min(this.combo, 22) / 34);
     this.rawScore += VALUE[j];
     this.score += Math.round(VALUE[j] * mult);
 
@@ -332,11 +339,11 @@
 
     /* coach reacts to streaks */
     if (this.combo > 0 && this.combo % 25 === 0) {
-      this.say(AcroCoach.say('bigStreak'), 3.0);
+      this.say(Coach.say('onFire'), 3.0);
       this.fx.confetti(this.w, this.h, 40);
       AcroAudio.sfx.star();
     } else if (this.combo > 0 && this.combo % 10 === 0) {
-      this.say(AcroCoach.say('streak'), 2.6);
+      this.say(Coach.say('doingWell'), 2.6);
     }
   };
 
@@ -385,8 +392,9 @@
     this.beat = AcroAudio.beats();
     var spb = this.secPerBeat();
 
-    /* miss anything that scrolled past the window unjudged */
-    for (var i = 0; i < this.chart.notes.length; i++) {
+    /* Once the run is over the score is locked; judging on would keep
+       mutating the tally behind the results screen. */
+    for (var i = 0; !this.finished && i < this.chart.notes.length; i++) {
       var n = this.chart.notes[i];
       if (!n.judged && (this.beat - n.beat) * spb > W_GOOD) {
         this.judge(n, 'miss');
@@ -420,9 +428,14 @@
     var stars = acc >= 0.90 ? 3 : (acc >= 0.72 ? 2 : (acc >= 0.45 ? 1 : 0));
 
     var res = {
-      levelId: this.level.id,
+      levelId: this.cfg.id,
+      room: this.cfg.room,
+      performance: !!this.cfg.performance,
       score: this.score, accuracy: acc, stars: stars,
-      counts: this.counts, bestCombo: this.bestCombo,
+      /* a snapshot, not a live reference */
+      counts: { perfect: this.counts.perfect, great: this.counts.great,
+                good: this.counts.good, miss: this.counts.miss },
+      bestCombo: this.bestCombo,
       holdSeconds: this.holdSeconds, cleanReps: this.cleanReps,
       totalNotes: total,
       flawless: this.counts.miss === 0 && total > 0
@@ -430,7 +443,7 @@
 
     AcroAudio.sfx.cheer(2.2);
     this.fx.confetti(this.w, this.h, stars >= 2 ? 160 : 70);
-    this.say(AcroCoach.say(stars >= 3 ? 'result3' : (stars === 2 ? 'result2' : 'result1')), 5);
+    this.say(Coach.respondTo(acc, false, false), 5);
 
     var self = this;
     setTimeout(function () {
@@ -622,7 +635,7 @@
     ctx.textAlign = 'right';
     ctx.fillStyle = 'rgba(255,255,255,0.55)';
     ctx.font = F('700', 11);
-    ctx.fillText(this.level.icon + '  ' + this.level.name.toUpperCase(), rx, pad + 16 * k);
+    ctx.fillText((this.cfg.icon || '🎵') + '  ' + String(this.cfg.name || '').toUpperCase(), rx, pad + 16 * k);
     ctx.fillStyle = 'rgba(255,255,255,0.85)';
     ctx.font = F('800', 15);
     var accNow = this.chart.maxRaw ? (this.rawScore / this.chart.maxRaw) : 0;
@@ -731,7 +744,7 @@
     ctx.closePath();
   }
 
-  global.AcroGame = {
+  global.Rhythm = {
     Game: Game,
     buildChart: buildChart,
     LANE_LABEL: LANE_LABEL,

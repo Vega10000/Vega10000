@@ -41,7 +41,7 @@ const { chromium } = require('playwright');
     };
 
     results.tracks = [];
-    for (const s of ['chill', 'boombap', 'trap', 'showcase']) {
+    for (const s of ['hiphop', 'rnb', 'funk', 'pop', 'afrobeat', 'electronic', 'trap', 'cinematic']) {
       results.tracks.push(await sample(s, 1500));
     }
     // sound effects must also produce nodes

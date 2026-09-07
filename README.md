@@ -1,66 +1,115 @@
-# 🤸‍♀️ Acro Academy
+# 🤸‍♀️ ACROVERSE: Rise of the Acrobat
 
-A rhythm-based acrobatics training game for a young gymnast who has just started acro.
-Coach Nova calls out real technique cues, the drills build in the order a beginner class
-actually moves, and every skill links out to a real video tutorial.
+An acrobatics training adventure for a young gymnast — part sports game, part
+rhythm game, part RPG, part virtual coach.
 
-**Play it:** open `index.html` in any browser. No install, no build step, no server needed.
+**Play it:** open `index.html` in any browser. No install, no build step, no server.
+
+---
+
+## Safety first — the design rule everything else bends around
+
+This is a game for a nine-year-old who has just started acro, so it never
+pretends an animation is permission to try something.
+
+Every skill is classified:
+
+| | |
+|---|---|
+| 🏠 **Safe at home** (16 skills) | balances, stretches, jumps, dance steps, body-weight strength |
+| 🛡️ **Coach-supervised** (7 skills) | cartwheels, handstands, rolls, bridges, round-offs, walkovers, candlesticks |
+
+A supervised mission **cannot be started** until the player reads the warning
+and ticks an acknowledgement — the start button is disabled until she does.
+The Tumbling Arena carries the label permanently, every skill chip shows its
+tier, every supervised video carries a safety note, and the very first mission
+in the game is a Science Corner lesson explaining the difference.
+
+The game teaches shapes, timing and vocabulary. The skill itself belongs in the
+gym, with a real coach and a real mat. Coach Zuri says so, repeatedly.
 
 ---
 
 ## What's in it
 
-### 🎯 Drills that follow a real progression
-Seven training zones, unlocked by stars so the hard tumbling can't be skipped:
+### 🏛️ The Academy
+Seven story **districts** (Discovery → Control → Rhythm → Flight → Creation →
+Performance → Championship) with **33 missions**, gated so each opens when the
+last is finished. Plus eight **training rooms** for free practice: Balance Lab,
+Flexibility Garden, Power Room, Coordination Zone, Rhythm Studio, Tumbling
+Arena, Choreography Studio and Performance Arena.
 
-| Zone | Focus | Unlocks at |
-|---|---|---|
-| 🔥 Warm-Up Zone | Stretch and hold shapes | Start |
-| ⭐ Shapes Lab | Tuck, straddle, pike | 1 ★ |
-| 💪 Strength Studio | Hollow, arch, candlestick | 3 ★ |
-| 🕊️ Balance Bay | Relevé, passé, handstand | 6 ★ |
-| 🌉 Flex & Bridge Studio | Bridge, splits | 9 ★ |
-| 🌀 Tumble Track | Rolls, cartwheels, round-offs | 12 ★ |
-| 🎪 The Showcase | The full performance routine | 15 ★ |
+### 🗣️ Coach Zuri
+**163 written lines.** 112 "Golden Nuggets" across the fourteen coaching themes
+— courage, discipline, balance, flexibility, strength, coordination, patience,
+focus, recovery, performance, confidence, sportsmanship, creativity and handling
+mistakes — plus 51 reactions that respond to what actually happened.
 
-Plus a **Skill Drills** page for every one of the 16 skills — an animated looping
-breakdown, the coaching cue, and a link to the tutorials for that skill.
+She adapts. Struggling gets *"Let's change the strategy — not your goal."*
+A comeback gets *"You struggled and then you solved it."* A shuffled-bag picker
+stops her repeating herself. She can speak aloud (toggleable) and always shows
+captions.
 
-### 🗣️ Coach Nova
-104 written lines across two registers — real technique correction
-("*Hand, hand, foot, foot — in one straight line*") and how-to-practise mindset
-("*Falling is data, not failure*"). She reacts to what actually happened: streaks,
-misses, the specific skill on screen, and the end-of-session result. Lines are
-drawn from a shuffled bag so she never repeats herself back-to-back, and she can
-speak out loud through the browser's speech synthesis (toggleable).
+### 🎮 Nine ways to play
+Seven arcade mini-games — **Perfect Landing**, **Balance Beam**, **Memory
+Routine**, **Mirror Master**, **Spin Doctor**, **Freeze Frame**, **Combo
+Creator** — plus the rhythm drill engine and the Choreography Studio.
 
-### 🏅 32 accolades
-Bronze through platinum, across precision, combos, per-skill mastery, endurance,
-day streaks and performance scores. Locked badges show a live progress bar
-(`7 / 10 cartwheels`) rather than a mystery box. Six ranks from Rookie to Legend.
+**No fail state anywhere.** Running out of time ends the round and scores what
+you did. A weak run earns fewer stars and a coaching note, never a loss screen.
 
-### 🎵 Original hip-hop / R&B, generated live
-**No copyrighted music is used or needed.** The soundtrack is synthesised in the
-browser from oscillators and noise — 808s with pitch glide, trap hi-hat rolls,
-swung boom-bap kits, Rhodes-style seventh chords, and a sidechain duck on every
-kick. Five tracks: chill R&B, boom-bap, trap, a showcase anthem, and a menu loop.
+### 🏅 88 accolades, 10 ranks
+Bronze → platinum across fourteen categories. Locked badges show live progress
+(`7 / 10 cartwheels`) rather than a mystery box. Ranks run Rookie Acrobat →
+Movement Explorer → Balance Builder → Skill Seeker → Acrobat Apprentice →
+Rising Acrobat → Rhythm Artist → Performance Artist → Elite Acrobat → **Acro
+Champion**.
 
-This is also the game's **master clock**: notes are charted against beat positions
-read from the audio engine, not a wall-clock timer, so the chart cannot drift out
-of sync with the music.
+### ✨ Star Sparks
+Earned by practising, learning, improving and creating. Spent on leotards,
+hairstyles, hair colours, celebration effects and trophy-room decorations —
+37 items. **No loot boxes, no randomness, no real money, no pay-to-win.**
+Cosmetics never touch scoring.
 
-### 📺 Real tutorial videos
-34 curated YouTube tutorials across 11 topics, from warm-ups to back walkovers.
-Cards load thumbnail-first (no YouTube JS until you click) and **degrade
-gracefully**: if a video is ever deleted or made private, the card detects the
-missing thumbnail and turns itself into a YouTube search for the same topic
-instead of showing a dead player. Every card also carries a direct link.
+### 🎵 Eight original tracks, generated live
+Hip-hop, R&B, funk, pop, cinematic, Afrobeat-inspired, electronic and trap —
+**synthesised in the browser** from oscillators and noise. 808s with pitch
+glide, trap hi-hat rolls, swung boom-bap, Rhodes-style sevenths, sidechain duck
+on every kick.
 
-### 🎨 Graphics
-Everything is drawn procedurally to canvas — no image assets to load or lose.
-A 16-joint skeletal gymnast with keyframed pose clips, auto-pointing toes when
-airborne, a spring-chain ponytail, motion trails, floor reflection, beat-reactive
-crowd and spotlights, particles, chalk dust and confetti.
+No copyrighted music is used or needed. The arrangement also **thickens as she
+plays better** — the lead line and extra percussion only enter above a combo
+threshold, so a strong run literally sounds fuller.
+
+This engine is also the game's **master clock**: notes are charted against beat
+positions read from the audio, not a wall timer, so the chart cannot drift out
+of sync. Measured drift across all eight tracks: ≤ 0.02 beats.
+
+### 📺 Watch → Try → Reflect
+24 real tutorials across 10 topics, each carrying full metadata: creator,
+difficulty, duration, age range, educational purpose and a **safety note**.
+Every video ends with a reflection question (*"What did the athlete do BEFORE
+they started stretching?"*) that awards XP for thinking about it.
+
+Cards load thumbnail-first, so no YouTube JavaScript runs until one is clicked.
+
+### 🔬 Coach's Science Corner
+Eight illustrated lessons that teach physics without saying "physics" — centre
+of mass and base of support, absorbing force on landing, how body shape changes
+rotation, momentum, why we warm up, and what nerves actually are. Each has an
+animated canvas diagram instead of an equation.
+
+### 👪 Parent dashboard
+Sessions, minutes, day streak, accolades, videos watched, questions answered,
+science read, routines built, favourite rooms and most-practised skills — with
+a prominent statement that this is a **motivation and learning tool, not an
+assessment**, and does not replace a qualified coach.
+
+### ♿ Accessibility
+Reduce motion, larger text, captions, colour-blind mode (shapes as well as
+colours), independent music/effects/voice toggles, music volume, and three
+difficulty settings that widen or tighten timing windows without faking the
+score. Auto-pauses when the tab is hidden.
 
 ---
 
@@ -68,59 +117,48 @@ crowd and spotlights, particles, chalk dust and confetti.
 
 | | |
 |---|---|
-| **Keyboard** | `A` `S` `D` `F`, or the arrow keys |
-| **Touch** | Four full-width pads across the bottom |
+| **Rhythm drills** | `A` `S` `D` `F` or arrow keys — hold the long notes |
+| **Mini-games** | `1` `2` `3` `4`, `←` `→`, `SPACE` |
+| **Touch** | Four lane pads, or the mini-game pad row |
 | **Pause** | `Esc`, or the button top-right |
-
-Tap on the beat as each skill reaches the line. **Hold** the long notes for the
-whole bar — that's a balance or flexibility hold, and letting go early costs you.
-
-There is **no fail state**. A weaker run just earns fewer stars, and Nova tells
-you what to fix.
 
 ---
 
 ## Project layout
 
 ```
-index.html          screens and markup
-css/style.css       styling (tablet-first, 44px minimum touch targets)
-js/skills.js        16 skills: coaching data + keyframed pose clips
-js/levels.js        the seven zones and their unlock thresholds
-js/coach.js         Coach Nova's line library and non-repeating picker
-js/videos.js        the tutorial library
-js/accolades.js     32 accolades + the saved profile (localStorage)
-js/audio.js         hip-hop/R&B synth engine, and the master clock
-js/character.js     skeletal gymnast: pose solving and rendering
-js/stage.js         the gym: crowd, spotlights, mat, reflection
-js/fx.js            particles, pop text, screen shake
-js/game.js          chart generation, judgment, scoring, the play loop
-js/ui.js            screens, navigation, video cards, speech
-test/               browser smoke test, pose sheet, audio verification
+index.html                 screens and markup
+css/style.css              styling — tablet-first, 44px minimum touch targets
+js/data/       skills · coach · videos · science · shop · rooms · districts
+js/engine/     audio (synth + master clock) · character · stage · fx
+js/systems/    profile (XP, sparks, accolades, quests) · missions
+js/games/      rhythm (drills + performances) · minigames (seven arcade modes)
+js/ui/app.js   screens, navigation, safety gate, game flow
+test/          browser smoke test · audio verification · pose sheet
 ```
 
-Plain scripts, no modules and no bundler — which is exactly why the game runs
-from a `file://` double-click as happily as from a web server.
-
-## Accessibility & safety
-
-- **Reduce motion** setting cuts particles, shake, and crowd/spotlight animation
-- Coach voice can be turned off; music and effects toggle independently
-- Auto-pauses when the tab is hidden
-- No accounts, no network calls, no analytics — progress is saved only in
-  `localStorage` on the device, and the game runs fully offline apart from the
-  YouTube video embeds
+Plain scripts, no modules and no bundler — which is exactly why it runs from a
+`file://` double-click as happily as from a web server. Adding a skill, a
+mission, a video, a lesson, an accolade or a whole mini-game is a data change;
+none of it requires touching the engine.
 
 ## Tests
 
+All run against real Chromium via Playwright:
+
 ```bash
-npm --prefix /opt/node22/lib/node_modules ls playwright   # bundled with the image
-NODE_PATH=/opt/node22/lib/node_modules node test/smoke.js        # full playthrough, fails on any console error
-NODE_PATH=/opt/node22/lib/node_modules node test/audio-check.js  # proves the music engine schedules audio
-NODE_PATH=/opt/node22/lib/node_modules node test/posesheet.js    # renders a pose sheet for visual review
+NODE_PATH=/opt/node22/lib/node_modules node test/smoke.js        # full playthrough
+NODE_PATH=/opt/node22/lib/node_modules node test/audio-check.js  # synth + clock accuracy
+NODE_PATH=/opt/node22/lib/node_modules node test/posesheet.js    # pose sheet for review
+node -e "require('./test/harness.js').load()"                    # data layer under Node
 ```
+
+The smoke test asserts, among other things, that a coach-supervised mission's
+start button is **disabled before acknowledgement and enabled after** — that
+check is the one that must never regress.
 
 ---
 
-*Tutorial videos are hosted on YouTube by their respective creators and are linked,
-not redistributed. All music and artwork in this game are generated at runtime.*
+*Tutorial videos are hosted on YouTube by their respective creators and are
+linked, not redistributed. All music and artwork are generated at runtime.
+Progress is stored only in this browser and sent nowhere.*

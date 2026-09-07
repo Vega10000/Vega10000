@@ -205,10 +205,10 @@
         y: bob - pulse,
         spine: -90 + Math.sin(this.idlePhase * 0.6) * 2.5,
         neck: -90 + Math.sin(this.idlePhase * 0.5) * 3,
-        armLA: 112 + Math.sin(this.idlePhase) * 7,
-        armLB: 104 + Math.sin(this.idlePhase + 0.6) * 10,
-        armRA: 68 - Math.sin(this.idlePhase) * 7,
-        armRB: 76 - Math.sin(this.idlePhase + 0.6) * 10,
+        armLA: 104 + Math.sin(this.idlePhase) * 7,
+        armLB: 99 + Math.sin(this.idlePhase + 0.6) * 10,
+        armRA: 76 - Math.sin(this.idlePhase) * 7,
+        armRB: 81 - Math.sin(this.idlePhase + 0.6) * 10,
         legLA: 96 + Math.sin(this.idlePhase * 0.5) * 1.5,
         legRA: 84 - Math.sin(this.idlePhase * 0.5) * 1.5
       });

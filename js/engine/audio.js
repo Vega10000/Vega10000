@@ -28,6 +28,7 @@
   var timer = null;
 
   var cur = null;               // current style definition
+  var intensity = 0.5;          // 0..1 — how much of the arrangement plays
   var startTime = 0;            // ctx time the loop began
   var nextStep = 0;             // next 16th-note index to schedule
   var stepsPerBeat = 4;
@@ -250,6 +251,59 @@
                   [16, 74, 0.5], [22, 72, 1.0], [32, 76, 0.5], [40, 81, 1.5]],
       clapInsteadOfSnare: true
     },
+
+    /* Funk for the Coordination Zone — syncopated, busy, playful. */
+    funk: {
+      bpm: 104, swing: 0.18, bars: 4,
+      kick:  ['x--x--x---x-x---', 'x--x--x-----x---', 'x--x--x---x-x---', 'x--x--x-x-x-x-x-'],
+      snare: ['----x-------x---', '----x-------x-x-', '----x-------x---', '----x---x---x-x-'],
+      hat:   ['x-xxx-x-x-xxx-x-', 'x-xxx-x-x-xxx-x-', 'x-xxx-x-x-xxx-x-', 'xxxxx-x-xxxxx-x-'],
+      openHat: '--------x-------',
+      chords: [[52, 55, 59, 62], [50, 53, 57, 60], [55, 58, 62, 65], [48, 52, 55, 59]],
+      bassLine: [40, 38, 43, 36],
+      leadMotif: [[0, 76, 0.25], [2, 74, 0.25], [4, 71, 0.5], [10, 76, 0.25],
+                  [12, 79, 0.75], [26, 74, 0.5], [36, 71, 0.5], [44, 76, 1.0]],
+      clapInsteadOfSnare: false
+    },
+    /* Bright pop for the Choreography Studio. */
+    pop: {
+      bpm: 118, swing: 0.04, bars: 4,
+      kick:  ['x---x---x---x---', 'x---x---x---x---', 'x---x---x---x---', 'x---x---x-x-x---'],
+      snare: ['----x-------x---', '----x-------x---', '----x-------x---', '----x---x---x-x-'],
+      hat:   ['x-x-x-x-x-x-x-x-', 'x-x-x-x-x-x-x-x-', 'x-x-x-x-x-x-x-x-', 'x-x-x-x-xxx-x-x-'],
+      openHat: '------------x---',
+      chords: [[57, 60, 64], [53, 57, 60], [55, 59, 62], [60, 64, 67]],
+      bassLine: [45, 41, 43, 48],
+      leadMotif: [[0, 81, 0.5], [4, 79, 0.5], [8, 76, 0.75], [16, 77, 0.5],
+                  [20, 81, 0.5], [32, 79, 0.5], [40, 84, 1.25]],
+      clapInsteadOfSnare: true
+    },
+    /* Afrobeat-inspired instrumental — rolling, warm, percussive. */
+    afrobeat: {
+      bpm: 108, swing: 0.10, bars: 4,
+      kick:  ['x-----x---x-----', 'x-----x---x-----', 'x-----x---x-----', 'x-----x---x-x-x-'],
+      snare: ['--------x-------', '--------x-----x-', '--------x-------', '--------x---x-x-'],
+      hat:   ['x-xx-xx-x-xx-xx-', 'x-xx-xx-x-xx-xx-', 'x-xx-xx-x-xx-xx-', 'x-xx-xxxx-xx-xx-'],
+      openHat: '----x-------x---',
+      chords: [[57, 61, 64], [55, 59, 62], [52, 56, 59], [55, 59, 62]],
+      bassLine: [45, 43, 40, 43],
+      leadMotif: [[0, 76, 0.25], [3, 78, 0.25], [6, 81, 0.5], [14, 76, 0.5],
+                  [22, 73, 0.5], [30, 76, 0.75], [38, 81, 0.5], [46, 78, 1.0]],
+      clapInsteadOfSnare: false
+    },
+    /* Electronic for high-energy drills. */
+    electronic: {
+      bpm: 126, swing: 0, bars: 4,
+      kick:  ['x---x---x---x---', 'x---x---x---x---', 'x---x---x---x---', 'x---x---x---x-x-'],
+      snare: ['----x-------x---', '----x-------x---', '----x-------x---', '----x---x---x-x-'],
+      hat:   ['--x---x---x---x-', 'x-x-x-x-x-x-x-x-', '--x---x---x---x-', 'xxx-xxx-xxx-xxx-'],
+      openHat: '--------------x-',
+      chords: [[45, 48, 52, 55], [48, 52, 55, 59], [43, 46, 50, 53], [50, 53, 57, 60]],
+      bassLine: [33, 36, 31, 38],
+      leadMotif: [[0, 72, 0.25], [2, 72, 0.25], [4, 75, 0.5], [8, 79, 0.5],
+                  [16, 77, 0.25], [18, 77, 0.25], [20, 74, 0.75], [32, 72, 0.5], [40, 84, 1.0]],
+      clapInsteadOfSnare: true
+    },
     /* Low-key loop for the hub, so menus are not silent. */
     menu: {
       bpm: 86, swing: 0.16, bars: 4,
@@ -262,6 +316,12 @@
       leadMotif: null, clapInsteadOfSnare: false
     }
   };
+
+  /* Rooms pick a genre; these map onto the kits above. */
+  var ALIASES = { hiphop: 'boombap', rnb: 'chill', cinematic: 'showcase' };
+  function resolveStyle(name) {
+    return STYLES[name] || STYLES[ALIASES[name]] || STYLES.menu;
+  }
 
   /* ------------------------------------------------------------ scheduler */
   function stepTime(step) {
@@ -315,11 +375,15 @@
       sub808(t, mtof(bn2 + (bar % 2 ? 0 : 3)), (60 / cur.bpm) * 0.9, 0);
     }
 
-    if (cur.leadMotif) {
+    /* Arrangement layers gate on intensity, so a strong run literally
+       sounds fuller than a shaky one. */
+    if (cur.leadMotif && intensity >= 0.55) {
       cur.leadMotif.forEach(function (nte) {
-        if (nte[0] === s) lead(t, nte[1], (60 / cur.bpm) * nte[2], 1);
+        if (nte[0] === s) lead(t, nte[1], (60 / cur.bpm) * nte[2], Math.min(1, intensity + 0.2));
       });
     }
+    if (intensity >= 0.8 && (i === 14 || i === 6) && bar % 2 === 1) clap(t, 0.5);
+    if (intensity >= 0.92 && i === 12 && bar === 3) hat(t, true, 0.9);
   }
 
   function tick() {
@@ -370,7 +434,7 @@
   }
 
   function play(styleName) {
-    var s = STYLES[styleName] || STYLES.menu;
+    var s = resolveStyle(styleName);
     /* The clock must restart even when there is no audio device, otherwise a
        muted or unsupported browser would chart notes against a stale epoch. */
     if (!init()) {
@@ -472,10 +536,13 @@
       if (!on && ready) { /* keep the clock running so charts stay aligned */ }
     },
     setSfx: function (on) { sfxOn = !!on; },
+    /* 0..1. Called live from gameplay as her combo and accuracy climb. */
+    setIntensity: function (v) { intensity = Math.max(0, Math.min(1, v)); },
+    getIntensity: function () { return intensity; },
     musicVolume: function (v) {
       if (master && ctx) master.gain.setTargetAtTime(db(-5) * v, ctx.currentTime, 0.05);
     },
     styles: Object.keys(STYLES),
-    styleBpm: function (n) { return (STYLES[n] || STYLES.menu).bpm; }
+    styleBpm: function (n) { return resolveStyle(n).bpm; }
   };
 })(window);
