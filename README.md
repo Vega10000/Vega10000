@@ -49,19 +49,6 @@
     <circle cx="0" cy="11" r="6" fill="#0a1626"/>
     <rect x="-2.5" y="14" width="5" height="12" rx="2" fill="#0a1626"/>
   </g>
-
-  <!-- text -->
-  <text x="60" y="78" class="mono" font-size="24" fill="#00ff9c">&gt; whoami<tspan class="cursor">_</tspan></text>
-  <text x="60" y="160" class="mono" font-size="72" font-weight="bold" fill="#ffffff">JAMAL BURNS</text>
-  <text x="60" y="208" class="mono" font-size="32" fill="#29d3ff">Cybersecurity Analyst</text>
-  <text x="60" y="254" class="mono" font-size="20" fill="#a9bccd">Security Operations · Compliance · CMMC / NIST SP 800-171</text>
-  <text x="60" y="288" class="mono" font-size="16" fill="#00ff9c" opacity="0.85">Security+ · SC-900 · Southern California · Open to remote</text>
-</svg>
-Uploading banner.svg…]()
-<p align="center">
-  <img src="https://raw.githubusercontent.com/Vega10000/Vega10000/main/banner.svg" alt="Jamal Burns - Cybersecurity Analyst" width="100%">
-</p>
-
 **Cybersecurity Analyst | Security Operations · Compliance (CMMC / NIST SP 800-171)**
 Southern California · Open to remote · Available immediately
 
@@ -110,6 +97,19 @@ I don't present lab work as production experience.
 ## Building now
 
 I'm building this page out one project at a time, with a write-up for each: what I set up, what I found, and what I learned. Projects will be added here as they are completed.
+  <!-- text -->
+  <text x="60" y="78" class="mono" font-size="24" fill="#00ff9c">&gt; whoami<tspan class="cursor">_</tspan></text>
+  <text x="60" y="160" class="mono" font-size="72" font-weight="bold" fill="#ffffff">JAMAL BURNS</text>
+  <text x="60" y="208" class="mono" font-size="32" fill="#29d3ff">Cybersecurity Analyst</text>
+  <text x="60" y="254" class="mono" font-size="20" fill="#a9bccd">Security Operations · Compliance · CMMC / NIST SP 800-171</text>
+  <text x="60" y="288" class="mono" font-size="16" fill="#00ff9c" opacity="0.85">Security+ · SC-900 · Southern California · Open to remote</text>
+</svg>
+Uploading banner.svg…]()
+<p align="center">
+  <img src="https://raw.githubusercontent.com/Vega10000/Vega10000/main/banner.svg" alt="Jamal Burns - Cybersecurity Analyst" width="100%">
+</p>
+
+
 
 <!-- Add each finished project as a row in this table, then delete this comment.
 | Project | Type | What it shows |
