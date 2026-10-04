@@ -1,4 +1,4 @@
-<img width="1200" height="320" alt="banner" src="https://github.com/user-attachments/assets/8a11ffb8-ea5e-4509-a596-a0e51e077bb1" />![<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 320" width="1200" height="320" role="img" aria-label="Jamal Burns - Cybersecurity Analyst banner" xmlns:c2pa="http://c2pa.org/manifest"><metadata><c2pa:manifest>NEDv4nHPr6s=</c2pa:manifest></metadata>
+<img width="1200" height="320" alt="banner" src="https://github.com/user-attachments/assets/8a11ffb8-ea5e-4509-a596-a0e51e077bb1" /><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 320" width="1200" height="320" role="img" aria-label="Jamal Burns - Cybersecurity Analyst banner" xmlns:c2pa="http://c2pa.org/manifest">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0" stop-color="#070b14"/>
@@ -12,18 +12,14 @@
       <stop offset="0" stop-color="#00ff9c" stop-opacity="0.22"/>
       <stop offset="1" stop-color="#00ff9c" stop-opacity="0"/>
     </radialGradient>
-    <style>
-      .mono { font-family: 'Courier New', Courier, monospace; }
-      .cursor { animation: blink 1.1s steps(1) infinite; }
-      @keyframes blink { 50% { opacity: 0; } }
-    </style>
+   
   </defs>
 
   <rect width="1200" height="320" fill="url(#bg)"/>
   <rect width="1200" height="320" fill="url(#grid)"/>
   <rect width="1200" height="320" fill="url(#glow)"/>
 
-  <!-- circuit traces -->
+  
   <g fill="none" stroke="#29d3ff" stroke-width="2" opacity="0.5">
     <path d="M700 60 H800 L830 90 H900"/>
     <path d="M790 270 H850 L880 240 H930"/>
@@ -49,7 +45,7 @@
     <circle cx="0" cy="11" r="6" fill="#0a1626"/>
     <rect x="-2.5" y="14" width="5" height="12" rx="2" fill="#0a1626"/>
   </g>
-**Cybersecurity Analyst | Security Operations · Compliance (CMMC / NIST SP 800-171)**
+Cybersecurity Analyst | Security Operations · Compliance (CMMC / NIST SP 800-171)**
 Southern California · Open to remote · Available immediately
 
 ![CompTIA Security+](https://img.shields.io/badge/CompTIA-Security%2B%20ce-C8202F?style=flat-square)
@@ -58,7 +54,7 @@ Southern California · Open to remote · Available immediately
 
 ---
 
-## About me
+About me
 
 I'm an entry-level cybersecurity analyst. I completed a remote cybersecurity analyst apprenticeship where I supported day-to-day security operations, researched potential issues, and documented my findings. Outside of work I build labs and write compliance documents, such as a CMMC Level 2 readiness project and a NIST SP 800-171 gap analysis, so I can show my work instead of just listing it.
 
@@ -74,7 +70,7 @@ Everything on this page is marked as one of three things, so you always know wha
 
 I don't present lab work as production experience.
 
-## Credentials
+ Credentials
 
 | Credential | Status |
 | --- | --- |
@@ -83,7 +79,7 @@ I don't present lab work as production experience.
 | DoD Mandatory Controlled Unclassified Information (CUI) Training (CDSE IF141) | Completed (training, not a certification) |
 | CMMC Registered Practitioner (RP) and CCP | **Pursuing. Not yet held** |
 
-## What I work with
+ What I work with
 
 | Area | Tools and topics | Where I've used them |
 | --- | --- | --- |
@@ -94,20 +90,12 @@ I don't present lab work as production experience.
 | Lab environment | VMware, VirtualBox, Docker, WSL, Linux, Windows | Lab |
 | Data | SQL, Power BI, Excel, Python | Work (SQL and Power BI reporting) and self-study |
 
-## Building now
+ Building now
 
 I'm building this page out one project at a time, with a write-up for each: what I set up, what I found, and what I learned. Projects will be added here as they are completed.
   <!-- text -->
-  <text x="60" y="78" class="mono" font-size="24" fill="#00ff9c">&gt; whoami<tspan class="cursor">_</tspan></text>
-  <text x="60" y="160" class="mono" font-size="72" font-weight="bold" fill="#ffffff">JAMAL BURNS</text>
-  <text x="60" y="208" class="mono" font-size="32" fill="#29d3ff">Cybersecurity Analyst</text>
-  <text x="60" y="254" class="mono" font-size="20" fill="#a9bccd">Security Operations · Compliance · CMMC / NIST SP 800-171</text>
-  <text x="60" y="288" class="mono" font-size="16" fill="#00ff9c" opacity="0.85">Security+ · SC-900 · Southern California · Open to remote</text>
+
 </svg>
-Uploading banner.svg…]()
-<p align="center">
-  <img src="https://raw.githubusercontent.com/Vega10000/Vega10000/main/banner.svg" alt="Jamal Burns - Cybersecurity Analyst" width="100%">
-</p>
 
 
 
