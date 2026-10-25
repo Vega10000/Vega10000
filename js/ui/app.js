@@ -31,6 +31,9 @@
   /* ------------------------------------------------------------- routing */
   function show(id) {
     stopPreview();
+    /* A line about the drill she just finished should not follow her into
+       the trophy room. Leaving a screen stops the coach mid-sentence. */
+    if (id !== current) hushCoach();
     var el = $(current);
     if (el) el.classList.remove('active');
     current = id;
@@ -64,16 +67,62 @@
     m.hidden = false;
   }
 
-  function speak(text) {
+  /* speak(text)            — a normal coach line
+     speak(text, 'safety')  — must not be cut off by anything
+     speak(text, 'chatter') — nice to hear, fine to lose
+
+     The voice engine owns rate, pitch, voice choice, queueing and music
+     ducking; this is only the bridge from the UI. If speech is unavailable
+     the captions on screen still carry every word. */
+  var PRIORITY = { chatter: 0, normal: 1, safety: 2 };
+
+  function speak(text, kind) {
     if (!P.settings.voice || !text) return;
-    var s = global.speechSynthesis;
-    if (!s || typeof global.SpeechSynthesisUtterance !== 'function') return;
-    try {
-      s.cancel();
-      var u = new global.SpeechSynthesisUtterance(text);
-      u.rate = 1.02; u.pitch = 1.1; u.volume = P.settings.coachVol;
-      s.speak(u);
-    } catch (e) { /* unavailable — captions still carry the line */ }
+    if (!global.AcroVoice) return;
+    AcroVoice.say(text, { priority: PRIORITY[kind] == null ? 1 : PRIORITY[kind] });
+  }
+
+  function hushCoach() { if (global.AcroVoice) AcroVoice.stop(); }
+
+  /* The Test voice button and the speed slider: an explicit request to hear
+     the coach, so it jumps the queue — but it still respects the toggle,
+     because silently overriding a setting she just turned off is worse than
+     a button that explains itself. */
+  function sayAsCoach(text) {
+    if (!global.AcroVoice || !AcroVoice.supported) {
+      toast('This browser has no built-in speech — captions still show every line.');
+      return;
+    }
+    if (!P.settings.voice) {
+      toast("Turn on 'Coach speaks out loud' first.");
+      return;
+    }
+    AcroVoice.say(text, { priority: 2 });
+  }
+
+  /* Tells her which of the device's real voices her coach landed on. On a
+     machine with only one installed voice all three coaches share it and
+     differ by pitch and speed alone; saying so beats her wondering why
+     Rex and Mira sound like cousins. */
+  function renderVoiceRow() {
+    var el = $('voice-which');
+    if (!el) return;
+    if (!global.AcroVoice || !AcroVoice.supported) {
+      el.textContent = 'No speech on this browser';
+      return;
+    }
+    var name = AcroVoice.voiceFor(P.settings.coach || 'zuri');
+    el.textContent = name ? 'Using “' + name + '”' : 'Using this device’s default voice';
+  }
+
+  /* A visible pulse on every coach avatar while she is talking, so a muted
+     or hard-of-hearing player can still see who is speaking. */
+  function bindSpeakingIndicator() {
+    if (!global.AcroVoice) return;
+    AcroVoice.onSpeaking(function (on) {
+      var avs = doc.querySelectorAll('.coach-av, .cav');
+      for (var i = 0; i < avs.length; i++) avs[i].classList.toggle('talking', on);
+    });
   }
 
   function esc(s) {
@@ -476,7 +525,7 @@
       ok.checked = false;
       startBtn.disabled = true;
       ok.onchange = function () { startBtn.disabled = !ok.checked; };
-      speak($('safety-text').textContent);
+      speak($('safety-text').textContent, 'safety');
     } else {
       gate.hidden = true;
       startBtn.disabled = false;
@@ -750,8 +799,8 @@
     }
 
     setTimeout(function () {
-      if (fresh.length) { AcroAudio.sfx.badge(); speak(Coach.say('accolade') + ' ' + fresh[0].name); }
-      else if (L.extra.newRank) { AcroAudio.sfx.badge(); speak(Coach.say('levelUp')); }
+      if (fresh.length) { AcroAudio.sfx.badge(); speak(Coach.say('accolade') + ' ' + fresh[0].name, 'chatter'); }
+      else if (L.extra.newRank) { AcroAudio.sfx.badge(); speak(Coach.say('levelUp'), 'chatter'); }
       else speak(line);
     }, 1100);
 
@@ -1447,6 +1496,12 @@
     AcroAudio.setMusic(s.music);
     AcroAudio.setSfx(s.sfx);
     AcroAudio.musicVolume(s.musicVol);
+    if (global.AcroVoice) {
+      AcroVoice.setEnabled(s.voice);
+      AcroVoice.setVolume(s.coachVol);
+      AcroVoice.setRate(s.voiceRate);
+      AcroVoice.setCoach(s.coach || 'zuri');
+    }
     rhythm.fx.reduceMotion = s.reduceMotion;
     rhythm.stage.reduceMotion = s.reduceMotion;
   }
@@ -1468,12 +1523,16 @@
         if (!open) { toast(c.name + ' unlocks at ' + c.unlock + ' XP.'); return; }
         P.settings.coach = c.id;
         Coach.setCoach(c.id);
+        if (global.AcroVoice) AcroVoice.setCoach(c.id);
         Profile.save();
         AcroAudio.sfx.click();
         renderCoachPicker();
         var hi = Coach.say('greeting');
         toast(c.name + ': ' + hi);
+        /* Greeting doubles as an audition — this is how she hears whether
+           she likes the new coach's voice before committing to it. */
         speak(hi);
+        renderVoiceRow();
       });
       box.appendChild(b);
     });
@@ -1503,6 +1562,38 @@
     vol.addEventListener('input', function () {
       s.musicVol = vol.value / 100; AcroAudio.musicVolume(s.musicVol); Profile.save();
     });
+
+    var cvol = $('set-coachvol');
+    cvol.value = Math.round(s.coachVol * 100);
+    cvol.addEventListener('input', function () {
+      s.coachVol = cvol.value / 100;
+      if (global.AcroVoice) AcroVoice.setVolume(s.coachVol);
+      Profile.save();
+    });
+
+    /* Speed matters more than it looks: the default rate is tuned for an
+       adult skim-reader, and a nine-year-old following an instruction often
+       needs it slower. */
+    var vrate = $('set-voicerate');
+    vrate.value = Math.round(s.voiceRate * 100);
+    vrate.addEventListener('input', function () {
+      s.voiceRate = vrate.value / 100;
+      if (global.AcroVoice) AcroVoice.setRate(s.voiceRate);
+      Profile.save();
+    });
+    vrate.addEventListener('change', function () {
+      /* Speak a sample on release so she can hear what she just chose. */
+      var c = Coach.activeCoach();
+      sayAsCoach(c.name + ' here. This is how fast I will talk.');
+    });
+
+    $('set-voicetest').addEventListener('click', function () {
+      AcroAudio.sfx.click();
+      var c = Coach.activeCoach();
+      sayAsCoach(c.name + '. ' + Coach.say('greeting'));
+    });
+
+    renderVoiceRow();
     var as = $('set-assist');
     as.value = s.assist;
     as.addEventListener('change', function () { s.assist = as.value; Profile.save(); });
@@ -1587,7 +1678,7 @@
     });
 
     $('btn-nugget').addEventListener('click', function () {
-      AcroAudio.sfx.click(); speak(newNugget());
+      AcroAudio.sfx.click(); speak(newNugget(), 'chatter');
     });
     $('btn-trophy').addEventListener('click', function () { AcroAudio.sfx.click(); show('scr-trophy'); renderTrophy(); });
     $('btn-videos').addEventListener('click', function () { AcroAudio.sfx.click(); openVideos(null); });
@@ -1716,6 +1807,7 @@
     bind();
     bindSettings();
     applySettings();
+    bindSpeakingIndicator();
     newNugget();
   }
 

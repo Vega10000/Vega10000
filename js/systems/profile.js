@@ -60,7 +60,7 @@
 
       settings: {
         music: true, sfx: true, voice: true,
-        musicVol: 0.8, coachVol: 1,
+        musicVol: 0.8, coachVol: 1, voiceRate: 1,
         reduceMotion: false, captions: true, bigText: false,
         colorBlind: false, assist: 'normal',  // easy | normal | pro
         coach: 'zuri'

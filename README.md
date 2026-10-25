@@ -59,6 +59,15 @@ comeback gets *"You struggled and then you solved it."* A shuffled-bag picker
 stops repetition. Every coach carries the coach-supervised warning — that one is
 not optional, and a test asserts it.
 
+**And they say it out loud.** The coach speaks through the browser's own speech
+synthesis: no audio files, no network, nothing copyrighted, still works offline.
+Each personality gets its own rate, pitch and — where the device has more than
+one voice installed — its own actual voice, so Rex does not sound like Mira. The
+music ducks while she talks, lines carry a priority so a badge pop can never cut
+off a safety warning, and her avatar pulses while she speaks. Speed and volume
+are adjustable, there is a **Test voice** button, and on a browser with no
+speech support at all the on-screen captions carry every word unchanged.
+
 ### 🎮 Nine ways to play
 Seven arcade mini-games — **Perfect Landing**, **Balance Beam**, **Memory
 Routine**, **Mirror Master**, **Spin Doctor**, **Freeze Frame**, **Combo
@@ -125,9 +134,12 @@ assessment**, and does not replace a qualified coach.
 
 ### ♿ Accessibility
 Reduce motion, larger text, captions, colour-blind mode (shapes as well as
-colours), independent music/effects/voice toggles, music volume, and three
-difficulty settings that widen or tighten timing windows without faking the
-score. Auto-pauses when the tab is hidden.
+colours), independent music/effects/voice toggles, separate music and coach
+volumes, adjustable speaking speed, and three difficulty settings that widen or
+tighten timing windows without faking the score. The coach's speech is never the
+only channel — every spoken line is also on screen, and every spoken line is
+also shown by a visible pulse on her avatar. Auto-pauses when the tab is
+hidden.
 
 ---
 
@@ -148,11 +160,11 @@ score. Auto-pauses when the tab is hidden.
 index.html                 screens and markup
 css/style.css              styling — tablet-first, 44px minimum touch targets
 js/data/       skills · coach · videos · science · shop · rooms · districts
-js/engine/     audio (synth + master clock) · character · stage · fx
+js/engine/     audio (synth + master clock) · voice (the coach's speech) · character · stage · fx
 js/systems/    profile (XP, sparks, accolades, quests) · missions
 js/games/      rhythm (drills + performances) · minigames (seven arcade modes)
 js/ui/app.js   screens, navigation, safety gate, game flow
-test/          browser smoke test · audio verification · pose sheet
+test/          browser smoke test · audio verification · voice checks · pose sheet
 ```
 
 Plain scripts, no modules and no bundler — which is exactly why it runs from a
@@ -167,6 +179,7 @@ All run against real Chromium via Playwright:
 ```bash
 NODE_PATH=/opt/node22/lib/node_modules node test/smoke.js        # full playthrough
 NODE_PATH=/opt/node22/lib/node_modules node test/audio-check.js  # synth + clock accuracy
+NODE_PATH=/opt/node22/lib/node_modules node test/voice-check.js  # coach speech, 29 assertions
 NODE_PATH=/opt/node22/lib/node_modules node test/posesheet.js    # pose sheet for review
 node -e "require('./test/harness.js').load()"                    # data layer under Node
 ```

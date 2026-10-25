@@ -505,3 +505,20 @@ html[data-cb="1"] .pill.gym::before{content:'▲ '}
 html[data-cb="1"] .pill.home::before{content:'● '}
 html[data-cb="1"] .badge.earned::after{content:'✓';position:absolute;top:9px;left:9px;
   color:var(--gold);font-weight:900}
+
+/* ------------------------------------------------- the coach is speaking */
+/* A ring pulses around the avatar while a line is being spoken, so the
+   speaking state is visible as well as audible. data-motion="1" above
+   flattens the animation, and the static ring still marks who is talking,
+   which is why the ring is a border rather than part of the keyframes. */
+.coach-av.talking,.coach-opt .cav.talking{
+  box-shadow:0 0 0 3px rgba(255,255,255,.22),0 0 18px 2px rgba(255,79,154,.55);
+  animation:coach-talk 1.05s ease-in-out infinite}
+@keyframes coach-talk{
+  0%,100%{box-shadow:0 0 0 2px rgba(255,255,255,.18),0 0 10px 1px rgba(255,79,154,.38)}
+  50%    {box-shadow:0 0 0 5px rgba(255,255,255,.26),0 0 22px 4px rgba(255,79,154,.66)}}
+
+.voice-test{justify-content:space-between;gap:12px}
+.voice-test #voice-which{font-size:.76rem;color:var(--dim);font-weight:700;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.btn-sm{padding:7px 12px;font-size:.78rem;flex:0 0 auto}

@@ -21,6 +21,8 @@
   var ctx = null, master = null, comp = null;
   var bus = {};                 // named gain nodes: drums, bass, keys, lead, sfx
   var duck = null;              // sidechain-style gain the kick dips
+  var speechDuck = null;        // slower dip that makes room for the coach
+  var speechDucked = false;
   var ready = false, musicOn = true, sfxOn = true;
 
   var LOOKAHEAD = 0.12;         // seconds scheduled ahead of the playhead
@@ -410,6 +412,12 @@
 
     duck = ctx.createGain(); duck.gain.value = 1;
 
+    /* A second, slower duck for when the coach is talking. This one sits
+       after the compressor so it dips the drums too — the kick duck above
+       deliberately does not, but you cannot hear a spoken sentence over a
+       trap hi-hat roll at full level. */
+    speechDuck = ctx.createGain(); speechDuck.gain.value = 1;
+
     bus.drums = ctx.createGain(); bus.drums.gain.value = db(-2);
     bus.bass  = ctx.createGain(); bus.bass.gain.value  = db(-4);
     bus.keys  = ctx.createGain(); bus.keys.gain.value  = db(-8);
@@ -421,7 +429,7 @@
     duck.connect(comp);
     bus.drums.connect(comp);
     bus.sfx.connect(comp);
-    comp.connect(master).connect(ctx.destination);
+    comp.connect(speechDuck).connect(master).connect(ctx.destination);
 
     ready = true;
     if (!timer) timer = setInterval(tick, TICK_MS);
@@ -536,6 +544,18 @@
       if (!on && ready) { /* keep the clock running so charts stay aligned */ }
     },
     setSfx: function (on) { sfxOn = !!on; },
+    /* Called by the voice engine on either side of a spoken line. Down fast
+       enough to clear the first word, back up slowly so it feels like the
+       music leaning out of the way rather than a switch being flipped. */
+    duckForSpeech: function (on) {
+      speechDucked = !!on;
+      if (!speechDuck || !ctx) return;
+      var t = ctx.currentTime;
+      speechDuck.gain.cancelScheduledValues(t);
+      speechDuck.gain.setValueAtTime(speechDuck.gain.value, t);
+      speechDuck.gain.linearRampToValueAtTime(on ? 0.22 : 1, t + (on ? 0.12 : 0.45));
+    },
+    isDuckedForSpeech: function () { return speechDucked; },
     /* 0..1. Called live from gameplay as her combo and accuracy climb. */
     setIntensity: function (v) { intensity = Math.max(0, Math.min(1, v)); },
     getIntensity: function () { return intensity; },
