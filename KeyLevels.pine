@@ -1,0 +1,233 @@
+//@version=6
+// ═══════════════════════════════════════════════════════════════════
+//  KEY LEVELS — CONFLUENCE SCORED
+//  Support / resistance ranked by why traders actually watch a price.
+//
+//  A level scores on five independent components (100 pts total):
+//    TOUCHES  30  how many swing pivots formed at this price
+//    VOLUME   25  how much volume actually traded through it
+//    RECENCY  20  how recently it was last respected
+//    FLIP     15  did it act as BOTH support and resistance
+//    ROUND    10  is it a psychologically round number
+//
+//  Only levels clearing your minimum score are drawn. Line thickness
+//  and label both reflect strength, so the chart ranks itself.
+// ═══════════════════════════════════════════════════════════════════
+
+indicator("Key Levels — Confluence Scored", "KeyLevels", overlay = true,
+     max_lines_count = 500, max_labels_count = 500)
+
+// ─── Detection ─────────────────────────────────────────────────────
+gD = "Detection"
+pivotLen = input.int(10,   "Pivot strength (bars each side)", minval = 2, maxval = 50, group = gD,
+     tooltip = "How many bars left and right must be lower/higher to count as a swing. Higher = fewer, more significant pivots.")
+lookback = input.int(500,  "Lookback bars", minval = 50, maxval = 5000, group = gD)
+tolPct   = input.float(0.5,"Cluster tolerance (%)", minval = 0.05, maxval = 5.0, step = 0.05, group = gD,
+     tooltip = "Pivots within this % of each other are treated as ONE level. Widen for volatile assets.")
+minTouch = input.int(2,    "Minimum touches to qualify", minval = 1, maxval = 10, group = gD)
+
+// ─── Volume ────────────────────────────────────────────────────────
+gV = "Volume"
+useVol = input.bool(true, "Weight levels by traded volume", group = gV,
+     tooltip = "Sums volume of every bar whose range contains the level. High-volume levels are where real positions sit.")
+
+// ─── Round numbers ─────────────────────────────────────────────────
+gR = "Round numbers"
+useRound  = input.bool(true, "Score round-number confluence", group = gR)
+drawMajor = input.bool(true, "Also draw untested round-number grid", group = gR)
+roundDensity = input.int(8, "Round grid density (lines across range)", minval = 3, maxval = 20, group = gR,
+     tooltip = "Step is derived from the visible range, so the grid stays readable at any price magnitude.")
+
+// ─── Output ────────────────────────────────────────────────────────
+gO = "Output"
+maxDraw    = input.int(12,    "Max levels to draw", minval = 1, maxval = 40, group = gO)
+minScore   = input.float(25.0,"Min score to draw", minval = 0, maxval = 100, step = 5, group = gO)
+showLabels = input.bool(true, "Show labels", group = gO)
+supCol     = input.color(color.new(#26a69a, 0), "Support colour",    group = gO)
+resCol     = input.color(color.new(#ef5350, 0), "Resistance colour", group = gO)
+rndCol     = input.color(color.new(#787b86, 30),"Round-number colour",group = gO)
+
+// ═══ State ═════════════════════════════════════════════════════════
+var array<float> lvlPrice = array.new<float>()
+var array<int>   lvlHi    = array.new<int>()    // pivot-HIGH touches (acted as resistance)
+var array<int>   lvlLo    = array.new<int>()    // pivot-LOW  touches (acted as support)
+var array<int>   lvlLast  = array.new<int>()    // bar_index of most recent touch
+var array<float> lvlVol   = array.new<float>()  // volume traded through the level
+
+var array<line>  drawnL   = array.new<line>()
+var array<label> drawnLb  = array.new<label>()
+
+// ═══ Helpers ═══════════════════════════════════════════════════════
+
+// Order of magnitude step for round numbers (BTC 76,670 -> 1000)
+autoStep(float p) =>
+    a = math.abs(p)
+    a <= 0 ? 1.0 : math.pow(10, math.floor(math.log10(a))) / 10.0
+
+// "Nice" grid step derived from the VISIBLE RANGE, not the price magnitude.
+// Keeps the round-number grid readable whether price is 76,000 or 0.0004.
+niceStep(float rng, int target) =>
+    st = 0.0
+    if rng > 0
+        raw = rng / target
+        mag = math.pow(10, math.floor(math.log10(raw)))
+        nn  = raw / mag
+        mult = nn < 1.5 ? 1.0 : nn < 3.0 ? 2.0 : nn < 7.0 ? 5.0 : 10.0
+        st := mult * mag
+    st
+
+// 0 = not round, 1 = minor, 2 = half, 3 = major
+roundTier(float p) =>
+    s = autoStep(p)
+    t = 0
+    if s > 0
+        eps = s * 0.06
+        if math.abs(p - math.round(p / (s * 10)) * (s * 10)) <= eps
+            t := 3
+        else if math.abs(p - math.round(p / (s * 5)) * (s * 5)) <= eps
+            t := 2
+        else if math.abs(p - math.round(p / s) * s) <= eps
+            t := 1
+    t
+
+// Merge a new pivot into an existing cluster, or start a new one
+addTouch(float px, bool isHigh, int bi) =>
+    idx = -1
+    n = array.size(lvlPrice)
+    if n > 0
+        for i = 0 to n - 1
+            lp = array.get(lvlPrice, i)
+            if math.abs(lp - px) <= lp * tolPct / 100.0
+                idx := i
+                break
+    if idx == -1
+        array.push(lvlPrice, px)
+        array.push(lvlHi,   isHigh ? 1 : 0)
+        array.push(lvlLo,   isHigh ? 0 : 1)
+        array.push(lvlLast, bi)
+        array.push(lvlVol,  0.0)
+    else
+        c  = array.get(lvlHi, idx) + array.get(lvlLo, idx)
+        np = (array.get(lvlPrice, idx) * c + px) / (c + 1)
+        array.set(lvlPrice, idx, np)
+        if isHigh
+            array.set(lvlHi, idx, array.get(lvlHi, idx) + 1)
+        else
+            array.set(lvlLo, idx, array.get(lvlLo, idx) + 1)
+        array.set(lvlLast, idx, bi)
+
+// ═══ Build levels ══════════════════════════════════════════════════
+ph = ta.pivothigh(high, pivotLen, pivotLen)
+pl = ta.pivotlow(low,  pivotLen, pivotLen)
+
+if not na(ph)
+    addTouch(ph, true,  bar_index - pivotLen)
+if not na(pl)
+    addTouch(pl, false, bar_index - pivotLen)
+
+// Accumulate volume that actually traded through each level
+if useVol
+    nv = array.size(lvlPrice)
+    if nv > 0
+        for i = 0 to nv - 1
+            lp = array.get(lvlPrice, i)
+            if low <= lp and high >= lp
+                array.set(lvlVol, i, array.get(lvlVol, i) + volume)
+
+// ═══ Render (last bar only) ════════════════════════════════════════
+if barstate.islast
+    // clear previous drawing
+    if array.size(drawnL) > 0
+        for i = 0 to array.size(drawnL) - 1
+            line.delete(array.get(drawnL, i))
+        array.clear(drawnL)
+    if array.size(drawnLb) > 0
+        for i = 0 to array.size(drawnLb) - 1
+            label.delete(array.get(drawnLb, i))
+        array.clear(drawnLb)
+
+    n = array.size(lvlPrice)
+    if n > 0
+        maxVol = 0.0
+        for i = 0 to n - 1
+            v = array.get(lvlVol, i)
+            if v > maxVol
+                maxVol := v
+
+        scores = array.new<float>()
+        for i = 0 to n - 1
+            hiT = array.get(lvlHi, i)
+            loT = array.get(lvlLo, i)
+            tot = hiT + loT
+            age = bar_index - array.get(lvlLast, i)
+
+            sc = 0.0
+            if tot >= minTouch and age <= lookback
+                sTouch = math.min(tot, 8) / 8.0 * 30.0
+                sVol   = useVol and maxVol > 0 ? array.get(lvlVol, i) / maxVol * 25.0 : 0.0
+                sRec   = (1.0 - math.min(age / (lookback * 1.0), 1.0)) * 20.0
+                sFlip  = (hiT > 0 and loT > 0) ? 15.0 : 0.0
+                sRound = 0.0
+                if useRound
+                    t = roundTier(array.get(lvlPrice, i))
+                    sRound := t == 3 ? 10.0 : t == 2 ? 7.0 : t == 1 ? 4.0 : 0.0
+                sc := sTouch + sVol + sRec + sFlip + sRound
+            array.push(scores, sc)
+
+        rank = array.sort_indices(scores, order.descending)
+        drawn = 0
+        x1 = math.max(0, bar_index - lookback)
+
+        for k = 0 to array.size(rank) - 1
+            if drawn >= maxDraw
+                break
+            i  = array.get(rank, k)
+            sc = array.get(scores, i)
+            if sc < minScore
+                break
+
+            px  = array.get(lvlPrice, i)
+            hiT = array.get(lvlHi, i)
+            loT = array.get(lvlLo, i)
+            isSup = px < close
+            col   = isSup ? supCol : resCol
+            w     = sc >= 70 ? 3 : sc >= 45 ? 2 : 1
+
+            ln = line.new(x1, px, bar_index, px, xloc = xloc.bar_index,
+                 extend = extend.right, color = col, width = w,
+                 style = sc >= 45 ? line.style_solid : line.style_dashed)
+            array.push(drawnL, ln)
+
+            if showLabels
+                tags = ""
+                if hiT > 0 and loT > 0
+                    tags += " ⇄FLIP"
+                if useVol and maxVol > 0 and array.get(lvlVol, i) / maxVol >= 0.6
+                    tags += " ▮HVN"
+                if useRound and roundTier(px) >= 2
+                    tags += " ◎ROUND"
+                txt = str.tostring(math.round(sc)) + "  " +
+                      str.tostring(px, format.mintick) + "  (" +
+                      str.tostring(hiT + loT) + "x)" + tags
+                lb = label.new(bar_index, px, txt, xloc = xloc.bar_index,
+                     style = isSup ? label.style_label_upper_left : label.style_label_lower_left,
+                     color = color.new(col, 85), textcolor = col, size = size.small)
+                array.push(drawnLb, lb)
+            drawn += 1
+
+    // Untested round-number grid, spaced from the visible range
+    if drawMajor
+        bars  = math.min(lookback, bar_index + 1)
+        hiR   = ta.highest(high, bars)
+        loR   = ta.lowest(low,  bars)
+        st    = niceStep(hiR - loR, roundDensity)
+        if st > 0
+            start = math.ceil(loR / st) * st
+            steps = math.floor((hiR - start) / st)
+            if steps >= 0 and steps < 80
+                for j = 0 to int(steps)
+                    rp = start + j * st
+                    ln = line.new(math.max(0, bar_index - lookback), rp, bar_index, rp,
+                         xloc = xloc.bar_index, extend = extend.right,
+                         color = rndCol, width = 1, style = line.style_dotted)
+                    array.push(drawnL, ln)
