@@ -950,15 +950,30 @@
     thumb.appendChild(img); thumb.appendChild(play);
 
     /* A thumbnail that 404s, or comes back as YouTube's 120px placeholder,
-       means the video is gone. Turn the card into a topic search rather
-       than offering a dead player. */
+       means we cannot show a preview here: either the video is gone, or the
+       network/page is blocking images. We cannot tell which from inside the
+       page, so the message must be true of both — and the real YouTube link
+       below the card keeps working either way. */
     function markDead() {
       card.classList.add('dead');
-      thumb.innerHTML = '<div class="vid-missing">This video has moved.<br>' +
-        'Use the search link below to find it.</div>';
+      thumb.innerHTML = '<div class="vid-missing">No preview here.<br>' +
+        'Open it on YouTube with the link below.</div>';
     }
     img.addEventListener('error', markDead);
     img.addEventListener('load', function () { if (img.naturalWidth <= 120) markDead(); });
+
+    /* Watching counts once, however she gets to the video: the inline
+       player where the page is allowed to embed one, or the YouTube link
+       where it is not. Crediting only the embed would quietly lock the
+       video accolades away on any host that blocks iframes. */
+    function creditWatch() {
+      if (P.videos.indexOf(v.id) !== -1) return;
+      P.videos.push(v.id);
+      Profile.addXp(40); Profile.addSparks(12);
+      Profile.save();
+      var fresh = Profile.checkAccolades();
+      if (fresh.length) toast('🏅 ' + fresh[0].name + ' unlocked!');
+    }
 
     thumb.addEventListener('click', function () {
       if (card.classList.contains('dead')) return;
@@ -967,13 +982,7 @@
       f.allow = 'accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture';
       f.allowFullscreen = true; f.title = v.title;
       thumb.innerHTML = ''; thumb.appendChild(f);
-      if (P.videos.indexOf(v.id) === -1) {
-        P.videos.push(v.id);
-        Profile.addXp(40); Profile.addSparks(12);
-        Profile.save();
-        var fresh = Profile.checkAccolades();
-        if (fresh.length) toast('🏅 ' + fresh[0].name + ' unlocked!');
-      }
+      creditWatch();
     });
 
     var body = doc.createElement('div');
@@ -987,6 +996,9 @@
       '<a href="' + Videos.watch(v.id) + '" target="_blank" rel="noopener">Watch on YouTube ↗</a>' +
       ' &nbsp;·&nbsp; <a href="' + Videos.searchUrl(group.search) +
         '" target="_blank" rel="noopener">Find more ↗</a>';
+
+    var watchLink = body.querySelector('a');
+    if (watchLink) watchLink.addEventListener('click', creditWatch);
 
     /* WATCH -> TRY -> REFLECT */
     if (v.reflect) {
